@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
+import { LoginForm } from "../components/ui/AuthForm";
 
 const LoginPage = () => {
     return (
-        // вставить свой код
-        <div>LoginPage</div>
+        <>
+            <LoginForm />
+        </>
     );
 };
 
