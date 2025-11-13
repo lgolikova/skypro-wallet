@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export const SHeader = styled.header`
     width: 100%;
     margin: 0 auto;
-    background-color: #fff;
+    background-color: #ffffff;
 `;
 
 export const SHeaderBlock = styled.div`
