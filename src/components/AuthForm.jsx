@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { BaseInput } from "./Input";
-import { BaseButton } from "./Button";
+import { BaseInput } from "./ui/Input";
+import { BaseButton } from "./ui/Button";
 
 export const LoginForm = () => {
     const [email, setEmail] = useState("");
