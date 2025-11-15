@@ -1,6 +1,26 @@
 import React from "react";
 import styled, { css } from "styled-components";
 
+const InputWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    max-width: 313px;
+`;
+
+const LabelWrapper = styled.label`
+    font-size: 12px;
+    color: black;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+`;
+
+const InputContainer = styled.div`
+    position: relative;
+`;
+
 const SInput = styled.input`
     width: 100%;
     max-width: 343px;
@@ -10,19 +30,20 @@ const SInput = styled.input`
     font-size: 12px;
     color: black;
     border: 1px solid #999999;
+    outline: none;
 
     ${({ error }) =>
         error &&
         css`
             border-color: #f25050;
-            background-color: #f25050;
+            background-color: #ffebeb;
         `}
 
     ${({ valid }) =>
         valid &&
         css`
-            border-color: none;
-            background-color: #1fa46c;
+            border-color: #1fa46c;
+            background-color: #dbffe9;
         `}
 `;
 
@@ -50,13 +71,24 @@ export const BaseInput = ({
     type = "text",
 }) => {
     return (
-        <SInput
-            type={type}
-            value={value}
-            onChange={onChange}
-            error={error}
-            valid={!error && valid}
-            placeholder={placeholder}
-        />
+        <InputWrapper>
+            {label && mode === "expense" && (
+                <LabelWrapper>
+                    {label}
+                    {error && <Star>*</Star>}
+                </LabelWrapper>
+            )}
+            <InputContainer>
+                <SInput
+                    type={type}
+                    value={value}
+                    onChange={onChange}
+                    error={error}
+                    valid={!error && valid}
+                    placeholder={placeholder}
+                />
+                {mode === "login" && error && <StarInside>*</StarInside>}
+            </InputContainer>
+        </InputWrapper>
     );
 };
