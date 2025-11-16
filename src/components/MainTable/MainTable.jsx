@@ -1,4 +1,5 @@
-import { STableWrapper, STableHeaderWrapper, STableTopWrapper, STableTitle, SActionsWrapper, SFilterWrapper, SSortWrapper, SColumnNamesWrapper, SColumnName } from "./MainTable.styled";
+import { STableWrapper, STableHeaderWrapper, STableTopWrapper, STableTitle, SActionsWrapper, SFilterWrapper, SSortWrapper, SColumnNamesWrapper, SColumnName, STableContent } from "./MainTable.styled";
+import { MainTableRow } from "../MainTableRow/MainTableRow";
 
 
 export const MainTable = () => {
@@ -19,6 +20,10 @@ export const MainTable = () => {
           <SColumnName>Сумма</SColumnName>
         </SColumnNamesWrapper>
       </STableHeaderWrapper>
+
+      <STableContent>
+        <MainTableRow />
+      </STableContent>
     </STableWrapper>
   )
 }

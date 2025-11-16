@@ -71,3 +71,12 @@ export const SColumnName = styled.div`
   vertical-align: middle;
   color: #999999;
 `;
+
+export const STableContent = styled.div`
+  width: 100%;
+  padding: 18px 34px 7px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+`;
+
