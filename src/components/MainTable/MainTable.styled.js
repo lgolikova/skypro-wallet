@@ -45,14 +45,45 @@ export const SActionsWrapper = styled.div`
   gap: 24px;
 `;
 
-export const SFilterWrapper = styled.div`
+export const SActionWrapper = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  position: relative;
 `;
 
-export const SSortWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
+export const SFilterTitle = styled.div`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
+  text-align: center;
+  vertical-align: middle;
+`;
+
+export const SFlag = styled.span`
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+  text-align: center;
+  vertical-align: middle;
+  color: #1FA46C;
+  text-decoration: underline solid #1FA46C 1px;
+  text-underline-offset: 4px;
+`;
+
+export const SActionIcon = styled.img`
+  width: 7px;
+  height: 7px;
+`;
+
+export const SSortTitle = styled.div`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
+  text-align: center;
+  vertical-align: middle;
 `;
 
 export const SColumnNamesWrapper = styled.div`
