@@ -15,7 +15,7 @@ export const MainTableRow = () => {
   return (
     <>
       {transactions.map((transaction) =>
-        <SRowWrapper key={transaction.description}>
+        <SRowWrapper key={transaction._id}>
           <SItem>{transaction.description}</SItem>
           <SItem>{categoryMap[transaction.category]}</SItem>
           <SItem style={{ width: "142px" }}>{format(new Date(transaction.date), "dd.MM.yyyy")}</SItem>
