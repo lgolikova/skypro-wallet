@@ -16,7 +16,7 @@ export const transactions = [
     sum: 1234
   },
   {
-    _id: "67e46c608d573f845a6083f4",
+    _id: "67e46c608d573f845a6083f5",
     userId: "67e2cba0d743f2b960865bcb",
     description: "Кино, вино и домино",
     category: "joy",
@@ -24,7 +24,7 @@ export const transactions = [
     sum: 1234
   },
   {
-    _id: "67e46c608d573f845a6083f4",
+    _id: "67e46c608d573f845a6083f6",
     userId: "67e2cba0d743f2b960865bcb",
     description: "Кино, вино и домино",
     category: "joy",
@@ -32,7 +32,7 @@ export const transactions = [
     sum: 1234
   },
   {
-    _id: "67e46c608d573f845a6083f4",
+    _id: "67e46c608d573f845a6083f7",
     userId: "67e2cba0d743f2b960865bcb",
     description: "Кино, вино и домино",
     category: "joy",
