@@ -14,30 +14,27 @@ export const NewSpendForm = () => {
 
       <SBlockWrapper>
         <SBlockTitle>Описание</SBlockTitle>
-        <BaseInput placeholder="Введите описание"/>
+        <BaseInput placeholder="Введите описание" />
       </SBlockWrapper>
 
-      <SBlockWrapper style={{height: "141px"}}>
+      <SBlockWrapper style={{ height: "141px" }}>
         <SBlockTitle>Категория</SBlockTitle>
         <SCategoriesWrapper>
-          <Category name="Еда"></Category>
+          {categories.map((category) => category.icon ? <Category key={category.value} name={category.label} icon={category.icon} /> : null)}
         </SCategoriesWrapper>
       </SBlockWrapper>
 
       <SBlockWrapper>
         <SBlockTitle>Дата</SBlockTitle>
-        <BaseInput placeholder="Введите дату"/>
+        <BaseInput placeholder="Введите дату" />
       </SBlockWrapper>
 
       <SBlockWrapper>
         <SBlockTitle>Сумма</SBlockTitle>
-        <BaseInput placeholder="Введите сумму"/>
+        <BaseInput placeholder="Введите сумму" />
       </SBlockWrapper>
 
-      <BaseButton text="Добавить новый расход" active="true" />
+      <BaseButton onClick={() => { console.log("Нажали кнопку 'Добавить новый расход'"); }} text="Добавить новый расход" active="true" />
     </SFormWrapper>
   )
 }
-
-// src="../../src/assets/icons/logo.svg"
-//                             alt="logo"

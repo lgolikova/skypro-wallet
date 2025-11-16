@@ -39,8 +39,7 @@ export const SBlockTitle = styled.div`
 export const SCategoriesWrapper = styled.div`
   width: 100%;
   height: 105px;
-  /* height: 141px; */
-  /* background-color: transparent; */
-  /* display: flex; */
-  border: 1px solid #59e4e4ff;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 `;
