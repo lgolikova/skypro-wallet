@@ -72,7 +72,7 @@ export const BaseInput = ({
 }) => {
     return (
         <InputWrapper>
-            {label && mode === "expense" && (
+            {label && mode === "spend" && (
                 <LabelWrapper>
                     {label}
                     {error && <Star>*</Star>}

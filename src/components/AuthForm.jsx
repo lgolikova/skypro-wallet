@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { BaseInput } from "./ui/Input";
 import { BaseButton } from "./ui/Button";
-import SContainer from "./Container.styled";
-import SGlobalWrapper from "./GlobalWrapper.styled";
-import Header from "./Header/Header";
+// import SContainer from "./Container.styled";
+// import SGlobalWrapper from "./GlobalWrapper.styled";
+// import Header from "./Header/Header";
 
 const FormWrapper = styled.form`
     display: flex;
