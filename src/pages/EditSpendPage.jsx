@@ -1,9 +1,10 @@
 import React from "react";
+import { EditSpendForm } from "../components/SpendForm/EditSpendForm";
+
 
 const EditSpendPage = () => {
     return (
-        // вставить свой код
-        <div>EditSpendPage</div>
+        <EditSpendForm />
     );
 };
 

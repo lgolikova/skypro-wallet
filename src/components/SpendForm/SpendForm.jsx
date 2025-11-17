@@ -1,16 +1,16 @@
 import { BaseInput } from "../ui/Input";
 import { BaseButton } from "../ui/Button";
 import { Category } from "../category/Category";
-import { SFormWrapper, SFormTitle, SBlockWrapper, SBlockTitle, SCategoriesWrapper } from "./NewSpendForm.styled";
+import { SFormWrapper, SFormTitle, SBlockWrapper, SBlockTitle, SCategoriesWrapper } from "./SpendForm.styled";
 import { categories } from "../../utils/categories";
 
 
-export const NewSpendForm = () => {
-
+export const SpendForm = () => {
+  const isNewSpend = true;
 
   return (
     <SFormWrapper>
-      <SFormTitle>Новый расход</SFormTitle>
+      <SFormTitle>{isNewSpend ? "Новый расход" : "Редактирование"}</SFormTitle>
 
       <SBlockWrapper>
         <SBlockTitle>Описание</SBlockTitle>
@@ -34,7 +34,7 @@ export const NewSpendForm = () => {
         <BaseInput placeholder="Введите сумму" />
       </SBlockWrapper>
 
-      <BaseButton onClick={() => { console.log("Нажали кнопку 'Добавить новый расход'"); }} text="Добавить новый расход" active="true" />
+      <BaseButton onClick={() => { console.log("Нажали кнопку 'Добавить новый расход'"); }} text={isNewSpend ? "Добавить новый расход" : "Сохранить редактирование"} active="true" />
     </SFormWrapper>
   )
 }

@@ -3,7 +3,7 @@ import SGlobalWrapper from "../GlobalWrapper.styled";
 import SContainer from "../Container.styled";
 import { STitle, SContentWrapper } from "./Main.styled";
 import { MainTable } from "../MainTable/MainTable";
-import { NewSpendForm } from "../NewSpendForm/NewSpendForm";
+import { SpendForm } from "../SpendForm/SpendForm";
 
 
 export const Main = () => {
@@ -15,7 +15,7 @@ export const Main = () => {
           <STitle>Мои расходы</STitle>
           <SContentWrapper>
             <MainTable />
-            <NewSpendForm />
+            <SpendForm />
           </SContentWrapper>
         </SContainer>
       </SGlobalWrapper>
