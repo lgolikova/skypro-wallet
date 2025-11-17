@@ -3,21 +3,40 @@ import { Category } from "../category/Category";
 import { categories } from "../../utils/categories";
 
 
-export const DropdownListFilter = () => {
+export const DropdownListFilter = ({ onClick }) => {
   return (
-    <SDropdownListWrapper >
-      {categories.map((category) => category.icon ? <Category key={category.value} name={category.label} icon={category.icon} /> : null)}
-    </SDropdownListWrapper>
+    <>
+      <SDropdownListWrapper>
+        {categories
+          .filter((category) => category.icon)
+          .map((category) => (
+            <Category key={category.value}
+              onClick={onClick}
+              name={category.label} icon={category.icon} />
+          ))}
+      </SDropdownListWrapper>
+      {/* <SDropdownListWrapper >
+        {categories.map((category) => category.icon ? <Category key={category.value} onClick={onClick} name={category.label} icon={category.icon} /> : null)}
+      </SDropdownListWrapper> */}
+    </>
   )
 }
 
-export const DropdownListSort = () => {
+export const DropdownListSort = ({ onClick }) => {
   return (
     <SDropdownListWrapper>
-      <SContent>
+      <SContent
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }} >
         <STitle>Дате</STitle>
       </SContent>
-      <SContent>
+      <SContent
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }} >
         <STitle>Сумме</STitle>
       </SContent>
     </SDropdownListWrapper>

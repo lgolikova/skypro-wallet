@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 
 export const STableWrapper = styled.div`
@@ -76,6 +76,8 @@ export const SFlag = styled.span`
 export const SActionIcon = styled.img`
   width: 7px;
   height: 7px;
+  transform: rotateZ(${({ $isActive }) => ($isActive ? "180deg" : "0deg")});
+  transition: transform 0.5s ease-in-out;
 `;
 
 export const SSortTitle = styled.div`
@@ -111,3 +113,20 @@ export const STableContent = styled.div`
   gap: 14px;
 `;
 
+// const rotate = keyframes`
+// 0% {
+//   transform: rotateZ(0deg);
+// }
+// 100% {
+//   transform: rotateZ(180deg);
+// }
+// `;
+
+// const rotateBack = keyframes`
+// 0% {
+//   transform: rotateZ(180deg);
+// }
+// 100% {
+//   transform: rotateZ(0deg);
+// }
+// `;
