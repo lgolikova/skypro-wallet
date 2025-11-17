@@ -7,6 +7,7 @@ export const SWrapper = styled.div`
   padding: 8px 20px;
   background-color: #F4F5F6;
   border-radius: 30px;
+  cursor: pointer;
 `;
 
 export const SContent = styled.div`

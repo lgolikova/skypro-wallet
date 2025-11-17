@@ -15,6 +15,7 @@ export const SDropdownListWrapper = styled.div`
   z-index: 2;
   top: 24px;
   right: 0;
+  cursor: pointer;
 `;
 
 export const SContent = styled.div`
