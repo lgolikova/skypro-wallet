@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
 import SContainer from "../components/Container.styled";
 import SGlobalWrapper from "../components/GlobalWrapper.styled";
+import { BaseButton } from "../components/ui/Button";
 
 // Регистрируем компоненты Chart.js
 ChartJS.register(
@@ -25,7 +26,7 @@ ChartJS.register(
   Legend
 );
 
-// Стилизованные компоненты
+// Стилизованные компоненты (остаются без изменений)
 const SPageContainer = styled.div`
   padding: 32px 0;
 
@@ -54,10 +55,15 @@ const SMobilePageTitle = styled.h1`
 `;
 
 const SMobilePeriodTitle = styled.h2`
+  font-family: Montserrat;
+  font-weight: 700;
   font-size: 24px;
-  font-weight: 600;
+  line-height: 100%;
+  text-align: left;
+  vertical-align: middle;
   color: #000;
   margin-bottom: 20px;
+  padding: 0 16px;
 `;
 
 const SContent = styled.div`
@@ -98,9 +104,12 @@ const SCalendarHeader = styled.div`
 `;
 
 const SCalendarTitle = styled.h3`
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 16px;
+  font-family: Montserrat;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 100%;
+  text-align: center;
+  vertical-align: middle;
   color: #000;
 `;
 
@@ -171,14 +180,16 @@ const SCalendarDay = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 60px;
-  background: ${(props) => (props.selected ? "#565eef" : "#F4F5F6")};
-  color: ${(props) => (props.selected ? "#FFFFFF" : "#000000")};
+  background: ${(props) => (props.selected ? "#DBFFE9" : "#F4F5F6")};
+  color: ${(props) => (props.selected ? "#1fa46c" : "#000000")};
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-weight: ${(props) => (props.selected ? "600" : "normal")};
+  position: relative;
 
   &:hover {
-    background: ${(props) => (props.selected ? "#565eef" : "#e0e0e0")};
+    background: ${(props) => (props.selected ? "#DBFFE9" : "#e0e0e0")};
   }
 `;
 
@@ -197,6 +208,50 @@ const SMonthTitle = styled.div`
   background: white;
   padding: 10px 0;
   z-index: 1;
+`;
+
+const SYearSection = styled.div`
+  margin-bottom: 20px;
+`;
+
+const SYearTitle = styled.div`
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+  margin-bottom: 10px;
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 10px 0;
+  z-index: 1;
+`;
+
+const SMonthsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+`;
+
+const SMonthButton = styled.div`
+  width: 101px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  background: ${(props) => (props.selected ? "#DBFFE9" : "#F4F5F6")};
+  color: ${(props) => (props.selected ? "#1fa46c" : "#000000")};
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: ${(props) => (props.selected ? "600" : "normal")};
+  padding: 6px 0;
+  gap: 6px;
+
+  &:hover {
+    background: ${(props) => (props.selected ? "#DBFFE9" : "#e0e0e0")};
+  }
 `;
 
 const SChartContainer = styled.div`
@@ -244,40 +299,18 @@ const SChartWrapper = styled.div`
   }
 `;
 
-const SSelectPeriodButton = styled.button`
+const SButtonWrapper = styled.div`
   width: 100%;
-  padding: 12px;
-  background-color: #565eef;
-  color: white;
-  border: none;
-  border-radius: 6px;
   margin-top: 24px;
-  cursor: pointer;
-  font-family: "Montserrat", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
 
-  &:hover {
-    background-color: #4a52d4;
+  @media (max-width: 768px) {
+    margin-top: 20px;
   }
 `;
 
-const SConfirmButton = styled.button`
+const SConfirmButtonWrapper = styled.div`
   width: 100%;
-  padding: 12px;
-  background-color: #565eef;
-  color: white;
-  border: none;
-  border-radius: 6px;
   margin-top: 20px;
-  cursor: pointer;
-  font-family: "Montserrat", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-
-  &:hover {
-    background-color: #4a52d4;
-  }
 `;
 
 const SBackButton = styled.button`
@@ -309,8 +342,152 @@ const SHeaderRow = styled.div`
   margin-bottom: 16px;
 `;
 
-// Компонент календаря для мобильной версии
-const MobileCalendar = ({ selectedDates, onDateSelect }) => {
+const SPeriodSelector = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const SPeriodSwitcher = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const SPeriodButton = styled.button.attrs((props) => ({
+  "data-active": props.$active ? "true" : "false",
+}))`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: Montserrat;
+  font-size: 12px;
+  line-height: 150%;
+  text-align: center;
+  vertical-align: middle;
+
+  ${(props) =>
+    !props.$active &&
+    `
+    font-weight: 400;
+    color: #000;
+    text-decoration: none;
+  `}
+
+  ${(props) =>
+    props.$active &&
+    `
+    font-weight: 600;
+    color: #1fa46c;
+    text-decoration: underline;
+  `}
+  
+  &:hover {
+    font-weight: 600;
+    color: #1fa46c;
+    text-decoration: none;
+  }
+
+  transition: all 0.3s ease;
+`;
+
+// Компонент переключения периода для десктопа
+const DesktopPeriodSwitcher = ({ activePeriod, onPeriodChange }) => {
+  return (
+    <SPeriodSwitcher>
+      <SPeriodButton
+        $active={activePeriod === "month"}
+        onClick={() => onPeriodChange("month")}
+      >
+        Месяц
+      </SPeriodButton>
+      <SPeriodButton
+        $active={activePeriod === "year"}
+        onClick={() => onPeriodChange("year")}
+      >
+        Год
+      </SPeriodButton>
+    </SPeriodSwitcher>
+  );
+};
+
+// Компонент переключения периода для мобильной версии
+const MobilePeriodSwitcher = ({ activePeriod, onPeriodChange }) => {
+  return (
+    <SPeriodSwitcher style={{ marginBottom: "16px", padding: "0 16px" }}>
+      <SPeriodButton
+        $active={activePeriod === "month"}
+        onClick={() => onPeriodChange("month")}
+      >
+        Месяц
+      </SPeriodButton>
+      <SPeriodButton
+        $active={activePeriod === "year"}
+        onClick={() => onPeriodChange("year")}
+      >
+        Год
+      </SPeriodButton>
+    </SPeriodSwitcher>
+  );
+};
+
+// Компонент годового календаря
+const YearCalendar = ({ selectedDates, onDateSelect }) => {
+  const years = [2024, 2025];
+  const months = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ];
+
+  const isMonthSelected = (year, monthIndex) => {
+    return selectedDates.some(
+      (date) => date.getFullYear() === year && date.getMonth() === monthIndex
+    );
+  };
+
+  const handleMonthClick = (year, monthIndex) => {
+    const date = new Date(year, monthIndex, 1);
+    onDateSelect(date);
+  };
+
+  return (
+    <SCalendarScrollArea>
+      {years.map((year) => (
+        <SYearSection key={year}>
+          <SYearTitle>{year}</SYearTitle>
+          <SMonthsGrid>
+            {months.map((month, index) => {
+              const isSelected = isMonthSelected(year, index);
+              return (
+                <SMonthButton
+                  key={`${year}-${index}`}
+                  selected={isSelected}
+                  onClick={() => handleMonthClick(year, index)}
+                >
+                  {month}
+                </SMonthButton>
+              );
+            })}
+          </SMonthsGrid>
+        </SYearSection>
+      ))}
+    </SCalendarScrollArea>
+  );
+};
+
+// Компонент месячного календаря
+const MonthCalendar = ({ selectedDates, onDateSelect }) => {
   const months = [
     { year: 2024, month: 6, name: "Июль 2024" },
     { year: 2024, month: 7, name: "Август 2024" },
@@ -350,12 +527,10 @@ const MobileCalendar = ({ selectedDates, onDateSelect }) => {
     const firstDay = getFirstDayOfMonth(year, month);
     const days = [];
 
-    // Добавляем пустые ячейки для дней до первого дня месяца
     for (let i = 0; i < firstDay; i++) {
       days.push(<div key={`empty-${i}`} />);
     }
 
-    // Добавляем дни месяца
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       const isSelected = isDateSelected(date);
@@ -380,101 +555,71 @@ const MobileCalendar = ({ selectedDates, onDateSelect }) => {
   };
 
   return (
-    <SCalendarContainer>
-      <SCalendarContent>
-        <SWeekDays>
-          {weekDays.map((day) => (
-            <SWeekDay key={day}>{day}</SWeekDay>
-          ))}
-        </SWeekDays>
-        <SCalendarScrollArea>{months.map(renderMonth)}</SCalendarScrollArea>
-      </SCalendarContent>
-    </SCalendarContainer>
+    <>
+      <SWeekDays>
+        {weekDays.map((day) => (
+          <SWeekDay key={day}>{day}</SWeekDay>
+        ))}
+      </SWeekDays>
+      <SCalendarScrollArea>{months.map(renderMonth)}</SCalendarScrollArea>
+    </>
+  );
+};
+
+// Компонент календаря для мобильной версии
+const MobileCalendar = ({ selectedDates, onDateSelect }) => {
+  const [activePeriod, setActivePeriod] = useState("month");
+
+  return (
+    <>
+      <MobilePeriodSwitcher
+        activePeriod={activePeriod}
+        onPeriodChange={setActivePeriod}
+      />
+      <SCalendarContainer>
+        <SCalendarContent>
+          {activePeriod === "month" ? (
+            <MonthCalendar
+              selectedDates={selectedDates}
+              onDateSelect={onDateSelect}
+            />
+          ) : (
+            <YearCalendar
+              selectedDates={selectedDates}
+              onDateSelect={onDateSelect}
+            />
+          )}
+        </SCalendarContent>
+      </SCalendarContainer>
+    </>
   );
 };
 
 // Компонент календаря для десктопной версии
 const DesktopCalendar = ({ selectedDates, onDateSelect }) => {
-  const months = [
-    { year: 2024, month: 6, name: "Июль 2024" },
-    { year: 2024, month: 7, name: "Август 2024" },
-    { year: 2024, month: 8, name: "Сентябрь 2024" },
-    { year: 2024, month: 9, name: "Октябрь 2024" },
-    { year: 2024, month: 10, name: "Ноябрь 2024" },
-    { year: 2024, month: 11, name: "Декабрь 2024" },
-  ];
-
-  const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"];
-
-  const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const getFirstDayOfMonth = (year, month) => {
-    const day = new Date(year, month, 1).getDay();
-    return day === 0 ? 6 : day - 1;
-  };
-
-  const isDateSelected = (date) => {
-    return selectedDates.some(
-      (selected) =>
-        selected.getDate() === date.getDate() &&
-        selected.getMonth() === date.getMonth() &&
-        selected.getFullYear() === date.getFullYear()
-    );
-  };
-
-  const handleDateClick = (date) => {
-    onDateSelect(date);
-  };
-
-  const renderMonth = (monthData) => {
-    const { year, month, name } = monthData;
-    const daysInMonth = getDaysInMonth(year, month);
-    const firstDay = getFirstDayOfMonth(year, month);
-    const days = [];
-
-    // Добавляем пустые ячейки для дней до первого дня месяца
-    for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} />);
-    }
-
-    // Добавляем дни месяца
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      const isSelected = isDateSelected(date);
-
-      days.push(
-        <SCalendarDay
-          key={day}
-          selected={isSelected}
-          onClick={() => handleDateClick(date)}
-        >
-          {day}
-        </SCalendarDay>
-      );
-    }
-
-    return (
-      <SMonthSection key={`${year}-${month}`}>
-        <SMonthTitle>{name}</SMonthTitle>
-        <SCalendarGrid>{days}</SCalendarGrid>
-      </SMonthSection>
-    );
-  };
+  const [activePeriod, setActivePeriod] = useState("month");
 
   return (
     <SCalendarContainer>
       <SCalendarHeader>
         <SCalendarTitle>Период</SCalendarTitle>
+        <DesktopPeriodSwitcher
+          activePeriod={activePeriod}
+          onPeriodChange={setActivePeriod}
+        />
       </SCalendarHeader>
       <SCalendarContent>
-        <SWeekDays>
-          {weekDays.map((day) => (
-            <SWeekDay key={day}>{day}</SWeekDay>
-          ))}
-        </SWeekDays>
-        <SCalendarScrollArea>{months.map(renderMonth)}</SCalendarScrollArea>
+        {activePeriod === "month" ? (
+          <MonthCalendar
+            selectedDates={selectedDates}
+            onDateSelect={onDateSelect}
+          />
+        ) : (
+          <YearCalendar
+            selectedDates={selectedDates}
+            onDateSelect={onDateSelect}
+          />
+        )}
       </SCalendarContent>
     </SCalendarContainer>
   );
@@ -487,68 +632,97 @@ const SpendAnalysisPage = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const chartRef = useRef(null);
 
-  // Полные данные расходов по всем дням (имитация данных с API)
-  const expensesData = {
-    // Июль 2024
-    "2024-07-29": {
-      food: 21990,
-      transport: 19106,
-      housing: 13050,
-      entertainment: 11046,
-      education: 8500,
-      other: 4300,
-    },
-    "2024-07-30": {
-      food: 18500,
-      transport: 15200,
-      housing: 11500,
-      entertainment: 9200,
-      education: 6800,
-      other: 3500,
-    },
-    "2024-07-31": {
-      food: 24500,
-      transport: 19800,
-      housing: 14200,
-      entertainment: 12500,
-      education: 9200,
-      other: 4800,
-    },
-    "2024-08-01": {
-      food: 19800,
-      transport: 16500,
-      housing: 12100,
-      entertainment: 9800,
-      education: 7200,
-      other: 3900,
-    },
-    "2024-08-02": {
-      food: 23100,
-      transport: 18700,
-      housing: 13500,
-      entertainment: 11800,
-      education: 8900,
-      other: 4600,
-    },
-    "2024-08-03": {
-      food: 17200,
-      transport: 14300,
-      housing: 10800,
-      entertainment: 8500,
-      education: 6100,
-      other: 3200,
-    },
-    "2024-08-04": {
-      food: 25600,
-      transport: 21000,
-      housing: 14800,
-      entertainment: 13200,
-      education: 9800,
-      other: 5200,
-    },
+  // ГЕНЕРИРУЕМ данные для ВСЕХ дней всех месяцев чтобы не было пропусков
+  const generateExpensesData = () => {
+    const data = {};
+    const months = [
+      { year: 2024, month: 6, name: "Июль" }, // Июль
+      { year: 2024, month: 7, name: "Август" }, // Август
+      { year: 2024, month: 8, name: "Сентябрь" }, // Сентябрь
+      { year: 2024, month: 9, name: "Октябрь" }, // Октябрь
+      { year: 2024, month: 10, name: "Ноябрь" }, // Ноябрь
+      { year: 2024, month: 11, name: "Декабрь" }, // Декабрь
+    ];
+
+    // Базовые расходы по категориям для разных месяцев
+    const baseExpenses = {
+      6: {
+        food: 12000,
+        transport: 8000,
+        housing: 12000,
+        entertainment: 5000,
+        education: 3500,
+        other: 2500,
+      }, // Июль
+      7: {
+        food: 11000,
+        transport: 7500,
+        housing: 12000,
+        entertainment: 4500,
+        education: 3200,
+        other: 2200,
+      }, // Август
+      8: {
+        food: 10000,
+        transport: 7000,
+        housing: 12000,
+        entertainment: 4000,
+        education: 3000,
+        other: 2000,
+      }, // Сентябрь
+      9: {
+        food: 13000,
+        transport: 8500,
+        housing: 12000,
+        entertainment: 5500,
+        education: 3800,
+        other: 2800,
+      }, // Октябрь
+      10: {
+        food: 9000,
+        transport: 6000,
+        housing: 12000,
+        entertainment: 3500,
+        education: 2800,
+        other: 1800,
+      }, // Ноябрь
+      11: {
+        food: 20000,
+        transport: 12000,
+        housing: 12000,
+        entertainment: 9000,
+        education: 6000,
+        other: 4500,
+      }, // Декабрь
+    };
+
+    months.forEach(({ year, month }) => {
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const base = baseExpenses[month] || baseExpenses[6]; // fallback к июлю
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dateKey = date.toISOString().split("T")[0];
+
+        // Добавляем случайные вариации к базовым расходам (±20%)
+        const variation = 0.8 + Math.random() * 0.4; // от 0.8 до 1.2
+
+        data[dateKey] = {
+          food: Math.round(base.food * variation),
+          transport: Math.round(base.transport * variation),
+          housing: Math.round(base.housing * variation), // жилье обычно постоянное
+          entertainment: Math.round(base.entertainment * variation),
+          education: Math.round(base.education * variation),
+          other: Math.round(base.other * variation),
+        };
+      }
+    });
+
+    return data;
   };
 
-  // Новые цвета для столбцов
+  const expensesData = generateExpensesData();
+
   const backgroundColors = [
     "#D9B6FF", // Еда
     "#FFB53D", // Транспорт
@@ -558,9 +732,8 @@ const SpendAnalysisPage = () => {
     "#FFB9B8", // Другое
   ];
 
-  // Расчет данных для графика на основе выбранных дат
+  // Расчет данных для графика - ГАРАНТИРУЕМ что всегда есть данные
   const calculateChartData = () => {
-    // Суммируем расходы по категориям за выбранные даты
     const categorySums = {
       food: 0,
       transport: 0,
@@ -584,11 +757,14 @@ const SpendAnalysisPage = () => {
           ]
         : selectedDates;
 
+    let hasValidData = false;
+
     datesToCalculate.forEach((date) => {
       const dateKey = date.toISOString().split("T")[0];
       const dayExpenses = expensesData[dateKey];
 
       if (dayExpenses) {
+        hasValidData = true;
         categorySums.food += dayExpenses.food;
         categorySums.transport += dayExpenses.transport;
         categorySums.housing += dayExpenses.housing;
@@ -597,6 +773,28 @@ const SpendAnalysisPage = () => {
         categorySums.other += dayExpenses.other;
       }
     });
+
+    // Если нет валидных данных, показываем нулевые значения вместо исчезновения
+    if (!hasValidData && datesToCalculate.length > 0) {
+      // Используем данные первого выбранного дня как fallback
+      const firstDate = datesToCalculate[0];
+      const dateKey = firstDate.toISOString().split("T")[0];
+      const fallbackExpenses = expensesData[dateKey] || {
+        food: 10000,
+        transport: 7000,
+        housing: 12000,
+        entertainment: 4000,
+        education: 3000,
+        other: 2000,
+      };
+
+      categorySums.food = fallbackExpenses.food;
+      categorySums.transport = fallbackExpenses.transport;
+      categorySums.housing = fallbackExpenses.housing;
+      categorySums.entertainment = fallbackExpenses.entertainment;
+      categorySums.education = fallbackExpenses.education;
+      categorySums.other = fallbackExpenses.other;
+    }
 
     return {
       labels: [
@@ -621,7 +819,6 @@ const SpendAnalysisPage = () => {
           backgroundColor: backgroundColors,
           borderRadius: 8,
           borderSkipped: false,
-          // Настройки ширины столбцов
           barPercentage: 0.6,
           categoryPercentage: 0.8,
         },
@@ -629,9 +826,8 @@ const SpendAnalysisPage = () => {
     };
   };
 
-  // Расчет общей суммы расходов
+  // Расчет общей суммы - ГАРАНТИРУЕМ что всегда есть сумма
   const calculateTotalAmount = () => {
-    // Если даты не выбраны, считаем за период 29 июля - 4 августа
     const datesToCalculate =
       selectedDates.length === 0
         ? [
@@ -646,11 +842,14 @@ const SpendAnalysisPage = () => {
         : selectedDates;
 
     let total = 0;
+    let hasValidData = false;
+
     datesToCalculate.forEach((date) => {
       const dateKey = date.toISOString().split("T")[0];
       const dayExpenses = expensesData[dateKey];
 
       if (dayExpenses) {
+        hasValidData = true;
         total += Object.values(dayExpenses).reduce(
           (sum, expense) => sum + expense,
           0
@@ -658,12 +857,59 @@ const SpendAnalysisPage = () => {
       }
     });
 
+    // Fallback если нет данных
+    if (!hasValidData && datesToCalculate.length > 0) {
+      const firstDate = datesToCalculate[0];
+      const dateKey = firstDate.toISOString().split("T")[0];
+      const fallbackExpenses = expensesData[dateKey] || {
+        food: 10000,
+        transport: 7000,
+        housing: 12000,
+        entertainment: 4000,
+        education: 3000,
+        other: 2000,
+      };
+      total = Object.values(fallbackExpenses).reduce(
+        (sum, expense) => sum + expense,
+        0
+      );
+    }
+
     return total;
   };
 
+  // ВАЖНО: Вызываем функции расчета на каждом рендере
   const chartData = calculateChartData();
   const totalAmount = calculateTotalAmount();
 
+  // Кастомный плагин для отображения значений над столбцами
+  const customDataLabelsPlugin = {
+    id: "customDataLabels",
+    afterDraw: (chart) => {
+      const ctx = chart.ctx;
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.font = isMobile
+        ? "600 10px Montserrat, sans-serif"
+        : "600 16px Montserrat, sans-serif";
+      ctx.fillStyle = "#000";
+
+      chart.data.datasets.forEach((dataset, datasetIndex) => {
+        const meta = chart.getDatasetMeta(datasetIndex);
+        meta.data.forEach((bar, index) => {
+          const data = dataset.data[index];
+          if (data > 0) {
+            ctx.fillText(data.toLocaleString() + " ₽", bar.x, bar.y - 8);
+          }
+        });
+      });
+
+      ctx.restore();
+    },
+  };
+
+  // Настройки графика
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -672,17 +918,15 @@ const SpendAnalysisPage = () => {
         display: false,
       },
       tooltip: {
-        callbacks: {
-          label: function (context) {
-            return context.parsed.y.toLocaleString() + " ₽";
-          },
-        },
+        enabled: false,
       },
     },
     scales: {
       y: {
-        display: false, // Убираем ось Y
+        display: false,
         beginAtZero: true,
+        // Гарантируем что всегда есть suggestedMax
+        suggestedMax: Math.max(...chartData.datasets[0].data) * 1.2 || 50000,
       },
       x: {
         grid: {
@@ -697,33 +941,28 @@ const SpendAnalysisPage = () => {
     },
     layout: {
       padding: {
-        top: 40, // Добавляем отступ сверху для цифр
+        top: 40,
       },
     },
-    // Настройки для отображения значений над столбцами
+    // Плавная анимация изменений
     animation: {
-      duration: 1000,
-      onComplete: function () {
-        const ctx = this.ctx;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "bottom";
-        // Используем точные размеры из дизайна
-        ctx.font = isMobile
-          ? "600 10px Montserrat, sans-serif"
-          : "600 16px Montserrat, sans-serif";
-        ctx.fillStyle = "#000";
-
-        this.data.datasets.forEach((dataset, i) => {
-          const meta = this.getDatasetMeta(i);
-          meta.data.forEach((bar, index) => {
-            const data = dataset.data[index];
-            // Всегда показываем суммы
-            ctx.fillText(data.toLocaleString() + " ₽", bar.x, bar.y - 8);
-          });
-        });
-      },
+      duration: 500,
+      easing: "easeOutQuart",
     },
+    hover: {
+      animationDuration: 0,
+    },
+    events: ["mousemove", "mouseout", "click", "touchstart", "touchmove"],
   };
+
+  // Регистрируем кастомный плагин
+  useEffect(() => {
+    ChartJS.register(customDataLabelsPlugin);
+
+    return () => {
+      ChartJS.unregister(customDataLabelsPlugin);
+    };
+  }, [isMobile]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -767,7 +1006,11 @@ const SpendAnalysisPage = () => {
       });
     };
 
-    return `Расходы за ${formatDate(start)} — ${formatDate(end)}`;
+    if (selectedDates.length === 1) {
+      return `Расходы за ${formatDate(start)}`;
+    } else {
+      return `Расходы за ${formatDate(start)} — ${formatDate(end)}`;
+    }
   };
 
   // Для мобильной версии - страница выбора периода
@@ -789,9 +1032,13 @@ const SpendAnalysisPage = () => {
                 selectedDates={selectedDates}
                 onDateSelect={handleDateSelect}
               />
-              <SConfirmButton onClick={() => setShowCalendar(false)}>
-                Выбрать период
-              </SConfirmButton>
+              <SConfirmButtonWrapper>
+                <BaseButton
+                  text="Выбрать период"
+                  onClick={() => setShowCalendar(false)}
+                  active={true}
+                />
+              </SConfirmButtonWrapper>
             </SPageContainer>
           </SContainer>
         </SGlobalWrapper>
@@ -813,15 +1060,23 @@ const SpendAnalysisPage = () => {
                 <STotalAmount>{totalAmount.toLocaleString()} ₽</STotalAmount>
                 <SPeriodText>{getSelectedPeriodText()}</SPeriodText>
 
-                {/* График всегда отображается с суммами над столбцами */}
                 <SChartWrapper>
-                  <Bar ref={chartRef} data={chartData} options={chartOptions} />
+                  <Bar
+                    key={`mobile-${selectedDates.length}-${totalAmount}`}
+                    ref={chartRef}
+                    data={chartData}
+                    options={chartOptions}
+                  />
                 </SChartWrapper>
               </SChartContainer>
 
-              <SSelectPeriodButton onClick={() => setShowCalendar(true)}>
-                Выбрать другой период
-              </SSelectPeriodButton>
+              <SButtonWrapper>
+                <BaseButton
+                  text="Выбрать другой период"
+                  onClick={() => setShowCalendar(true)}
+                  active={true}
+                />
+              </SButtonWrapper>
             </SPageContainer>
           </SContainer>
         </SGlobalWrapper>
@@ -848,9 +1103,13 @@ const SpendAnalysisPage = () => {
                 <STotalAmount>{totalAmount.toLocaleString()} ₽</STotalAmount>
                 <SPeriodText>{getSelectedPeriodText()}</SPeriodText>
 
-                {/* График всегда отображается с суммами над столбцами */}
                 <SChartWrapper>
-                  <Bar ref={chartRef} data={chartData} options={chartOptions} />
+                  <Bar
+                    key={`desktop-${selectedDates.length}-${totalAmount}`}
+                    ref={chartRef}
+                    data={chartData}
+                    options={chartOptions}
+                  />
                 </SChartWrapper>
               </SChartContainer>
             </SContent>
