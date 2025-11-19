@@ -26,7 +26,7 @@ ChartJS.register(
   Legend
 );
 
-// Стилизованные компоненты (остаются без изменений)
+// Стилизованные компоненты
 const SPageContainer = styled.div`
   padding: 32px 0;
 
@@ -632,67 +632,123 @@ const SpendAnalysisPage = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const chartRef = useRef(null);
 
-  // ГЕНЕРИРУЕМ данные для ВСЕХ дней всех месяцев чтобы не было пропусков
+  // ГЕНЕРИРУЕМ данные для ВСЕХ дней всех месяцев
   const generateExpensesData = () => {
     const data = {};
     const months = [
-      { year: 2024, month: 6, name: "Июль" }, // Июль
-      { year: 2024, month: 7, name: "Август" }, // Август
-      { year: 2024, month: 8, name: "Сентябрь" }, // Сентябрь
-      { year: 2024, month: 9, name: "Октябрь" }, // Октябрь
-      { year: 2024, month: 10, name: "Ноябрь" }, // Ноябрь
-      { year: 2024, month: 11, name: "Декабрь" }, // Декабрь
+      { year: 2024, month: 0, name: "Январь" },
+      { year: 2024, month: 1, name: "Февраль" },
+      { year: 2024, month: 2, name: "Март" },
+      { year: 2024, month: 3, name: "Апрель" },
+      { year: 2024, month: 4, name: "Май" },
+      { year: 2024, month: 5, name: "Июнь" },
+      { year: 2024, month: 6, name: "Июль" },
+      { year: 2024, month: 7, name: "Август" },
+      { year: 2024, month: 8, name: "Сентябрь" },
+      { year: 2024, month: 9, name: "Октябрь" },
+      { year: 2024, month: 10, name: "Ноябрь" },
+      { year: 2024, month: 11, name: "Декабрь" },
+      { year: 2025, month: 0, name: "Январь" },
+      { year: 2025, month: 1, name: "Февраль" },
     ];
 
     // Базовые расходы по категориям для разных месяцев
     const baseExpenses = {
+      0: {
+        food: 15000,
+        transport: 10000,
+        housing: 15000,
+        entertainment: 8000,
+        education: 5000,
+        other: 4000,
+      }, // Январь
+      1: {
+        food: 14000,
+        transport: 9500,
+        housing: 15000,
+        entertainment: 7500,
+        education: 4500,
+        other: 3500,
+      }, // Февраль
+      2: {
+        food: 16000,
+        transport: 11000,
+        housing: 15000,
+        entertainment: 9000,
+        education: 5500,
+        other: 4500,
+      }, // Март
+      3: {
+        food: 17000,
+        transport: 12000,
+        housing: 15000,
+        entertainment: 10000,
+        education: 6000,
+        other: 5000,
+      }, // Апрель
+      4: {
+        food: 18000,
+        transport: 13000,
+        housing: 15000,
+        entertainment: 11000,
+        education: 6500,
+        other: 5500,
+      }, // Май
+      5: {
+        food: 19000,
+        transport: 14000,
+        housing: 15000,
+        entertainment: 12000,
+        education: 7000,
+        other: 6000,
+      }, // Июнь
       6: {
-        food: 12000,
-        transport: 8000,
-        housing: 12000,
-        entertainment: 5000,
-        education: 3500,
-        other: 2500,
+        food: 20000,
+        transport: 15000,
+        housing: 15000,
+        entertainment: 13000,
+        education: 7500,
+        other: 6500,
       }, // Июль
       7: {
-        food: 11000,
-        transport: 7500,
-        housing: 12000,
-        entertainment: 4500,
-        education: 3200,
-        other: 2200,
+        food: 21000,
+        transport: 16000,
+        housing: 15000,
+        entertainment: 14000,
+        education: 8000,
+        other: 7000,
       }, // Август
       8: {
-        food: 10000,
-        transport: 7000,
-        housing: 12000,
-        entertainment: 4000,
-        education: 3000,
-        other: 2000,
+        food: 19000,
+        transport: 14000,
+        housing: 15000,
+        entertainment: 12000,
+        education: 7000,
+        other: 6000,
       }, // Сентябрь
       9: {
-        food: 13000,
-        transport: 8500,
-        housing: 12000,
-        entertainment: 5500,
-        education: 3800,
-        other: 2800,
+        food: 18000,
+        transport: 13000,
+        housing: 15000,
+        entertainment: 11000,
+        education: 6500,
+        other: 5500,
       }, // Октябрь
       10: {
-        food: 9000,
-        transport: 6000,
-        housing: 12000,
-        entertainment: 3500,
-        education: 2800,
-        other: 1800,
+        food: 17000,
+        transport: 12000,
+        housing: 15000,
+        entertainment: 10000,
+        education: 6000,
+        other: 5000,
       }, // Ноябрь
       11: {
-        food: 20000,
-        transport: 12000,
-        housing: 12000,
-        entertainment: 9000,
-        education: 6000,
-        other: 4500,
+        food: 22000,
+        transport: 17000,
+        housing: 15000,
+        entertainment: 15000,
+        education: 9000,
+        other: 8000,
       }, // Декабрь
     };
 
@@ -708,12 +764,12 @@ const SpendAnalysisPage = () => {
         const variation = 0.8 + Math.random() * 0.4; // от 0.8 до 1.2
 
         data[dateKey] = {
-          food: Math.round(base.food * variation),
-          transport: Math.round(base.transport * variation),
-          housing: Math.round(base.housing * variation), // жилье обычно постоянное
-          entertainment: Math.round(base.entertainment * variation),
-          education: Math.round(base.education * variation),
-          other: Math.round(base.other * variation),
+          food: Math.round((base.food * variation) / 30), // делим на 30 дней для дневных расходов
+          transport: Math.round((base.transport * variation) / 30),
+          housing: Math.round(base.housing / 30), // жилье обычно постоянное
+          entertainment: Math.round((base.entertainment * variation) / 30),
+          education: Math.round((base.education * variation) / 30),
+          other: Math.round((base.other * variation) / 30),
         };
       }
     });
@@ -732,7 +788,72 @@ const SpendAnalysisPage = () => {
     "#FFB9B8", // Другое
   ];
 
-  // Расчет данных для графика - ГАРАНТИРУЕМ что всегда есть данные
+  // Функция для получения всех дней месяца
+  const getDaysInMonth = (year, month) => {
+    const days = [];
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(new Date(year, month, day));
+    }
+
+    return days;
+  };
+
+  // Функция для определения режима выбора
+  const detectSelectionMode = (dates) => {
+    if (dates.length === 0) return "days";
+
+    // Если все даты - это первые числа месяцев, значит это выбор месяцев
+    const allAreFirstDays = dates.every((date) => date.getDate() === 1);
+    return allAreFirstDays ? "months" : "days";
+  };
+
+  // Функция для получения дней для расчета
+  const getSelectedDays = () => {
+    if (selectedDates.length === 0) {
+      // Период по умолчанию: 29 июля - 4 августа 2024
+      return [
+        new Date(2024, 6, 29),
+        new Date(2024, 6, 30),
+        new Date(2024, 6, 31),
+        new Date(2024, 7, 1),
+        new Date(2024, 7, 2),
+        new Date(2024, 7, 3),
+        new Date(2024, 7, 4),
+      ];
+    }
+
+    const currentMode = detectSelectionMode(selectedDates);
+
+    if (currentMode === "months") {
+      // Режим выбора месяцев - берем все дни выбранных месяцев
+      const monthsMap = new Map();
+
+      selectedDates.forEach((date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const key = `${year}-${month}`;
+
+        if (!monthsMap.has(key)) {
+          monthsMap.set(key, { year, month });
+        }
+      });
+
+      const allDays = [];
+      monthsMap.forEach(({ year, month }) => {
+        const daysInMonth = getDaysInMonth(year, month);
+        allDays.push(...daysInMonth);
+      });
+
+      return allDays;
+    } else {
+      // Режим выбора дней - берем только выбранные дни
+      return [...selectedDates].sort((a, b) => a - b);
+    }
+  };
+
+  // Расчет данных для графика
   const calculateChartData = () => {
     const categorySums = {
       food: 0,
@@ -743,28 +864,13 @@ const SpendAnalysisPage = () => {
       other: 0,
     };
 
-    // Если даты не выбраны, используем период 29 июля - 4 августа
-    const datesToCalculate =
-      selectedDates.length === 0
-        ? [
-            new Date(2024, 6, 29),
-            new Date(2024, 6, 30),
-            new Date(2024, 6, 31),
-            new Date(2024, 7, 1),
-            new Date(2024, 7, 2),
-            new Date(2024, 7, 3),
-            new Date(2024, 7, 4),
-          ]
-        : selectedDates;
-
-    let hasValidData = false;
+    const datesToCalculate = getSelectedDays();
 
     datesToCalculate.forEach((date) => {
       const dateKey = date.toISOString().split("T")[0];
       const dayExpenses = expensesData[dateKey];
 
       if (dayExpenses) {
-        hasValidData = true;
         categorySums.food += dayExpenses.food;
         categorySums.transport += dayExpenses.transport;
         categorySums.housing += dayExpenses.housing;
@@ -773,28 +879,6 @@ const SpendAnalysisPage = () => {
         categorySums.other += dayExpenses.other;
       }
     });
-
-    // Если нет валидных данных, показываем нулевые значения вместо исчезновения
-    if (!hasValidData && datesToCalculate.length > 0) {
-      // Используем данные первого выбранного дня как fallback
-      const firstDate = datesToCalculate[0];
-      const dateKey = firstDate.toISOString().split("T")[0];
-      const fallbackExpenses = expensesData[dateKey] || {
-        food: 10000,
-        transport: 7000,
-        housing: 12000,
-        entertainment: 4000,
-        education: 3000,
-        other: 2000,
-      };
-
-      categorySums.food = fallbackExpenses.food;
-      categorySums.transport = fallbackExpenses.transport;
-      categorySums.housing = fallbackExpenses.housing;
-      categorySums.entertainment = fallbackExpenses.entertainment;
-      categorySums.education = fallbackExpenses.education;
-      categorySums.other = fallbackExpenses.other;
-    }
 
     return {
       labels: [
@@ -826,54 +910,22 @@ const SpendAnalysisPage = () => {
     };
   };
 
-  // Расчет общей суммы - ГАРАНТИРУЕМ что всегда есть сумма
+  // Расчет общей суммы
   const calculateTotalAmount = () => {
-    const datesToCalculate =
-      selectedDates.length === 0
-        ? [
-            new Date(2024, 6, 29),
-            new Date(2024, 6, 30),
-            new Date(2024, 6, 31),
-            new Date(2024, 7, 1),
-            new Date(2024, 7, 2),
-            new Date(2024, 7, 3),
-            new Date(2024, 7, 4),
-          ]
-        : selectedDates;
+    const datesToCalculate = getSelectedDays();
 
     let total = 0;
-    let hasValidData = false;
-
     datesToCalculate.forEach((date) => {
       const dateKey = date.toISOString().split("T")[0];
       const dayExpenses = expensesData[dateKey];
 
       if (dayExpenses) {
-        hasValidData = true;
         total += Object.values(dayExpenses).reduce(
           (sum, expense) => sum + expense,
           0
         );
       }
     });
-
-    // Fallback если нет данных
-    if (!hasValidData && datesToCalculate.length > 0) {
-      const firstDate = datesToCalculate[0];
-      const dateKey = firstDate.toISOString().split("T")[0];
-      const fallbackExpenses = expensesData[dateKey] || {
-        food: 10000,
-        transport: 7000,
-        housing: 12000,
-        entertainment: 4000,
-        education: 3000,
-        other: 2000,
-      };
-      total = Object.values(fallbackExpenses).reduce(
-        (sum, expense) => sum + expense,
-        0
-      );
-    }
 
     return total;
   };
@@ -925,7 +977,6 @@ const SpendAnalysisPage = () => {
       y: {
         display: false,
         beginAtZero: true,
-        // Гарантируем что всегда есть suggestedMax
         suggestedMax: Math.max(...chartData.datasets[0].data) * 1.2 || 50000,
       },
       x: {
@@ -944,7 +995,6 @@ const SpendAnalysisPage = () => {
         top: 40,
       },
     },
-    // Плавная анимация изменений
     animation: {
       duration: 500,
       easing: "easeOutQuart",
@@ -994,9 +1044,8 @@ const SpendAnalysisPage = () => {
       return "Расходы за 29 июля 2024 — 4 августа 2024";
     }
 
+    const currentMode = detectSelectionMode(selectedDates);
     const sortedDates = [...selectedDates].sort((a, b) => a - b);
-    const start = sortedDates[0];
-    const end = sortedDates[sortedDates.length - 1];
 
     const formatDate = (date) => {
       return date.toLocaleDateString("ru-RU", {
@@ -1006,10 +1055,45 @@ const SpendAnalysisPage = () => {
       });
     };
 
-    if (selectedDates.length === 1) {
-      return `Расходы за ${formatDate(start)}`;
+    if (currentMode === "months") {
+      // Режим месяцев - показываем периоды с 1 по последнее число
+      const monthsMap = new Map();
+
+      sortedDates.forEach((date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const key = `${year}-${month}`;
+        if (!monthsMap.has(key)) {
+          monthsMap.set(key, { year, month });
+        }
+      });
+
+      const months = Array.from(monthsMap.values()).sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return a.month - b.month;
+      });
+
+      if (months.length === 1) {
+        const { year, month } = months[0];
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        return `Расходы за ${formatDate(firstDay)} — ${formatDate(lastDay)}`;
+      } else {
+        const firstMonth = months[0];
+        const lastMonth = months[months.length - 1];
+        const startDate = new Date(firstMonth.year, firstMonth.month, 1);
+        const endDate = new Date(lastMonth.year, lastMonth.month + 1, 0);
+        return `Расходы за ${formatDate(startDate)} — ${formatDate(endDate)}`;
+      }
     } else {
-      return `Расходы за ${formatDate(start)} — ${formatDate(end)}`;
+      // Режим дней - показываем точные выбранные даты
+      if (sortedDates.length === 1) {
+        return `Расходы за ${formatDate(sortedDates[0])}`;
+      } else {
+        const start = sortedDates[0];
+        const end = sortedDates[sortedDates.length - 1];
+        return `Расходы за ${formatDate(start)} — ${formatDate(end)}`;
+      }
     }
   };
 
