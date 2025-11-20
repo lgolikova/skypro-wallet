@@ -52,6 +52,7 @@ export const SActionWrapper = styled.div`
   align-items: center;
   gap: 8px;
   position: relative;
+  cursor: pointer;
 `;
 
 export const SFilterTitle = styled.div`
@@ -110,8 +111,8 @@ export const STableContent = styled.div`
   padding: 18px 34px 7px 32px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-`;
+  /* gap: 14px; */
+  `;
 
 // const rotate = keyframes`
 // 0% {
