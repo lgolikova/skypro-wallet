@@ -108,7 +108,9 @@ export const SColumnName = styled.div`
 
 export const STableContent = styled.div`
   width: 100%;
-  padding: 18px 34px 7px 32px;
+  /* padding: 18px 34px 7px 32px; */
+  padding-top: 18px;
+  /* padding-left: 32px; */
   display: flex;
   flex-direction: column;
   /* gap: 14px; */

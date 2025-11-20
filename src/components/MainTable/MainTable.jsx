@@ -5,9 +5,10 @@ import actionIcon from "../../assets/icons/actions.svg";
 import { DropdownListFilter, DropdownListSort } from "../DropdownList/DropdownList";
 
 
-export const MainTable = () => {
+export const MainTable = ({transactions, isSpendSelected, onclick}) => {
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [isSortActive, setIsSortActive] = useState(false);
+  // const [isSpendSelected, setIsSpendSelected] = useState("");
 
   const handleOpenFilter = () => {
     setIsFilterActive(true);
@@ -25,6 +26,10 @@ export const MainTable = () => {
     setIsSortActive(false);
   };
 
+  // const handleSendClick = (sendId) => {
+  //   // console.log(`кликнули по строчке с id=${sendId}`);
+  //   setIsSpendSelected(sendId);
+  // };
 
   return (
     <STableWrapper>
@@ -48,7 +53,7 @@ export const MainTable = () => {
               <SSortTitle>Сортировать по <SFlag>дате</SFlag></SSortTitle>
               <SActionIcon src={actionIcon} alt="сортировка" $isActive={isSortActive} />
             </SActionWrapper>
-            
+
           </SActionsWrapper>
         </STableTopWrapper>
 
@@ -61,7 +66,9 @@ export const MainTable = () => {
       </STableHeaderWrapper>
 
       <STableContent>
-        <MainTableRow />
+        {transactions.map((transaction) =>
+          <MainTableRow key={transaction._id} transaction={transaction} isSpendSelected={isSpendSelected} onClick={onclick} />
+        )}
       </STableContent>
     </STableWrapper>
   )

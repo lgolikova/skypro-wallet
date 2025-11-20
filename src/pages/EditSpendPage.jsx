@@ -2,9 +2,9 @@ import React from "react";
 import { EditSpendForm } from "../components/SpendForm/EditSpendForm";
 
 
-const EditSpendPage = () => {
+const EditSpendPage = ({isSpendSelected}) => {
     return (
-        <EditSpendForm />
+        <EditSpendForm isSpendSelected={isSpendSelected}/>
     );
 };
 

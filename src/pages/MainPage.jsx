@@ -7,9 +7,9 @@
 import { Main } from "../components/Main/Main";
 
 
-const MainPage = () => {
+const MainPage = ({transactions, isSpendSelected, onclick}) => {
     return (
-        <Main />
+        <Main transactions={transactions} isSpendSelected={isSpendSelected} onclick={onclick}/>
         // <>
         //     <SHeader />
         //     <SGlobalWrapper>

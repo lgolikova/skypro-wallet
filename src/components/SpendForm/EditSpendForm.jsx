@@ -1,8 +1,8 @@
 import { SpendForm } from "./SpendForm";
 
 
-export const EditSpendForm = () => {
+export const EditSpendForm = ({isSpendSelected}) => {
   return (
-    <SpendForm />
+    <SpendForm isSpendSelected={isSpendSelected}/>
   )
 }

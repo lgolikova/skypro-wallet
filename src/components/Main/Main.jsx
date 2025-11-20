@@ -6,7 +6,7 @@ import { MainTable } from "../MainTable/MainTable";
 import { SpendForm } from "../SpendForm/SpendForm";
 
 
-export const Main = () => {
+export const Main = ({transactions, isSpendSelected, onclick}) => {
   return (
     <>
       <Header />
@@ -14,7 +14,7 @@ export const Main = () => {
         <SContainer>
           <STitle>Мои расходы</STitle>
           <SContentWrapper>
-            <MainTable />
+            <MainTable transactions={transactions} isSpendSelected={isSpendSelected} onclick={onclick}/>
             <SpendForm />
           </SContentWrapper>
         </SContainer>

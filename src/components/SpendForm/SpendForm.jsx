@@ -5,12 +5,13 @@ import { SFormWrapper, SFormTitle, SBlockWrapper, SBlockTitle, SCategoriesWrappe
 import { categories } from "../../utils/categories";
 
 
-export const SpendForm = () => {
-  const isNewSpend = true;
+export const SpendForm = ({isSpendSelected}) => {
+  // const isNewSpend = true;
+  // console.log(isSpendSelected);
 
   return (
     <SFormWrapper>
-      <SFormTitle>{isNewSpend ? "Новый расход" : "Редактирование"}</SFormTitle>
+      <SFormTitle>{!isSpendSelected ? "Новый расход" : "Редактирование"}</SFormTitle>
 
       <SBlockWrapper>
         <SBlockTitle>Описание</SBlockTitle>
@@ -34,7 +35,7 @@ export const SpendForm = () => {
         <BaseInput placeholder="Введите сумму" />
       </SBlockWrapper>
 
-      <BaseButton onClick={() => { console.log("Нажали кнопку 'Добавить новый расход'"); }} text={isNewSpend ? "Добавить новый расход" : "Сохранить редактирование"} active="true" />
+      <BaseButton onClick={() => { console.log("Нажали кнопку 'Добавить новый расход'"); }} text={!isSpendSelected ? "Добавить новый расход" : "Сохранить редактирование"} active="true" />
     </SFormWrapper>
   )
 }
