@@ -1,9 +1,10 @@
 import React from "react";
+import { NewSpendForm } from "../components/SpendForm/NewSpendForm";
+
 
 const NewSpendPage = () => {
     return (
-        // вставить свой код
-        <div>NewSpendPage</div>
+        <NewSpendForm />
     );
 };
 
