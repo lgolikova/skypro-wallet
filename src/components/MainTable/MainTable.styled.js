@@ -114,7 +114,10 @@ export const STableContent = styled.div`
   display: flex;
   flex-direction: column;
   /* gap: 14px; */
-  `;
+`;
+
+export const SDropdownListWrapper = styled.div`
+`;
 
 // const rotate = keyframes`
 // 0% {

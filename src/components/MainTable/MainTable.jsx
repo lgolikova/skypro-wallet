@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { STableWrapper, STableHeaderWrapper, STableTopWrapper, STableTitle, SActionsWrapper, SActionWrapper, SColumnNamesWrapper, SColumnName, STableContent, SFilterTitle, SSortTitle, SFlag, SActionIcon } from "./MainTable.styled";
+import { useState, useEffect, useRef } from "react";
+import { STableWrapper, STableHeaderWrapper, STableTopWrapper, STableTitle, SActionsWrapper, SActionWrapper, SColumnNamesWrapper, SColumnName, STableContent, SFilterTitle, SSortTitle, SFlag, SActionIcon, SDropdownListWrapper } from "./MainTable.styled";
 import { MainTableRow } from "../MainTableRow/MainTableRow";
 import actionIcon from "../../assets/icons/actions.svg";
 import { DropdownListFilter, DropdownListSort } from "../DropdownList/DropdownList";
 
 
-export const MainTable = ({transactions, isSpendSelected, onclick}) => {
+export const MainTable = ({ transactions, isSpendSelected, onclick }) => {
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [isSortActive, setIsSortActive] = useState(false);
-  // const [isSpendSelected, setIsSpendSelected] = useState("");
+  const popRef = useRef(null);
 
   const handleOpenFilter = () => {
     setIsFilterActive(true);
@@ -26,10 +26,38 @@ export const MainTable = ({transactions, isSpendSelected, onclick}) => {
     setIsSortActive(false);
   };
 
-  // const handleSendClick = (sendId) => {
-  //   // console.log(`кликнули по строчке с id=${sendId}`);
-  //   setIsSpendSelected(sendId);
-  // };
+
+  const handleOutsideFilterClick = (event) => {
+    if (popRef.current && !popRef.current.contains(event.target)) {
+      setIsFilterActive(false); // закрыть выпадающий список фильтрации, если клик вне его
+    }
+  };
+
+  useEffect(() => {
+    // добавить обработчик клика вне выпадающего списка фильтрации
+    document.addEventListener('mousedown', handleOutsideFilterClick);
+    return () => {
+      // удалить обработчик клика вне выпадающего списка фильтрации при размонтировании компонента
+      document.removeEventListener('mousedown', handleOutsideFilterClick);
+    };
+  }, []);
+
+
+  const handleOutsideSortClick = (event) => {
+    if (popRef.current && !popRef.current.contains(event.target)) {
+      setIsSortActive(false); // закрыть выпадающий список сортировки, если клик вне его
+    }
+  };
+
+  useEffect(() => {
+    // добавить обработчик клика вне выпадающего списка сортировки
+    document.addEventListener('mousedown', handleOutsideSortClick);
+    return () => {
+      // удалить обработчик клика вне выпадающего списка сортировки при размонтировании компонента
+      document.removeEventListener('mousedown', handleOutsideSortClick);
+    };
+  }, []);
+
 
   return (
     <STableWrapper>
@@ -40,7 +68,7 @@ export const MainTable = ({transactions, isSpendSelected, onclick}) => {
 
             <SActionWrapper onClick={handleOpenFilter}>
               {isFilterActive &&
-                <DropdownListFilter onClick={handleCloseFilter} />
+                <SDropdownListWrapper ref={popRef}><DropdownListFilter onClick={handleCloseFilter} /></SDropdownListWrapper>
               }
               <SFilterTitle >Фильтровать по категории <SFlag>еда</SFlag></SFilterTitle>
               <SActionIcon src={actionIcon} alt="фильтр" $isActive={isFilterActive} />
@@ -48,7 +76,7 @@ export const MainTable = ({transactions, isSpendSelected, onclick}) => {
 
             <SActionWrapper onClick={handleClickSort}>
               {isSortActive &&
-                <DropdownListSort onClick={handleCloseSort} />
+                <SDropdownListWrapper ref={popRef}><DropdownListSort onClick={handleCloseSort} /></SDropdownListWrapper>
               }
               <SSortTitle>Сортировать по <SFlag>дате</SFlag></SSortTitle>
               <SActionIcon src={actionIcon} alt="сортировка" $isActive={isSortActive} />
