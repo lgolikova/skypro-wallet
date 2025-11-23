@@ -6,13 +6,23 @@ import NewSpendPage from "./pages/NewSpendPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import RegisterPage from "./pages/RegisterPage";
 import SpendAnalysisPage from "./pages/SpendAnalysisPage";
+import { transactions } from "./data";
+import { useState } from "react";
+
 
 function AppRoutes() {
+    const [isSpendSelected, setIsSpendSelected] = useState("");
+
+    const handleSendClick = (sendId) => {
+        // console.log(`кликнули по строчке с id=${sendId}`);
+        setIsSpendSelected(sendId);
+    };
+
     return (
         <Routes>
-            <Route path="/" element={<MainPage />}>
+            <Route path="/" element={<MainPage transactions={transactions} isSpendSelected={isSpendSelected} onclick={handleSendClick}/>}>
                 <Route path="spend/new" element={<NewSpendPage />} />
-                <Route path="spend/:id" element={<EditSpendPage />} />
+                <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected}/>} />
             </Route>
             <Route path="/spend-analysis" element={<SpendAnalysisPage />} />
             <Route path="/login" element={<LoginPage />} />
