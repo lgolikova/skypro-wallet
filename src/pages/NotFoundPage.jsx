@@ -19,7 +19,7 @@ const NotFoundPage = () => {
                 to="/"
                 style={{
                     fontSize: "18px",
-                    color: "#565eef",
+                    color: "#1fa46c",
                     textDecoration: "underline",
                 }}
             >
