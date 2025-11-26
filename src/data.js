@@ -18,25 +18,33 @@ export const transactions = [
   {
     _id: "67e46c608d573f845a6083f5",
     userId: "67e2cba0d743f2b960865bcb",
-    description: "Кино, вино и домино",
-    category: "joy",
+    description: "Трамвай",
+    category: "transport",
     date: "2025-11-11T17:00:00.000Z",
-    sum: 1234
+    sum: 67
   },
   {
     _id: "67e46c608d573f845a6083f6",
     userId: "67e2cba0d743f2b960865bcb",
-    description: "Кино, вино и домино",
-    category: "joy",
+    description: "Электроэнергия",
+    category: "housing",
     date: "2025-11-11T17:00:00.000Z",
-    sum: 1234
+    sum: 831
   },
   {
     _id: "67e46c608d573f845a6083f7",
     userId: "67e2cba0d743f2b960865bcb",
-    description: "Кино, вино и домино",
-    category: "joy",
+    description: "Курс по React",
+    category: "education",
     date: "2025-11-11T17:00:00.000Z",
-    sum: 1234
+    sum: 13456
+  },
+  {
+    _id: "67e46c608d573f845a6083f8",
+    userId: "67e2cba0d743f2b960865bcb",
+    description: "Корм собаке",
+    category: "others",
+    date: "2025-11-11T17:00:00.000Z",
+    sum: 5216.3
   },
 ]
