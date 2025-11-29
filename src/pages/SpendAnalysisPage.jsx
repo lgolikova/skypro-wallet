@@ -26,6 +26,60 @@ ChartJS.register(
   Legend
 );
 
+// Сервис для работы с API транзакций
+const API_BASE_URL = "https://wedev-api.sky.pro/api/transactions";
+
+const getAuthToken = () => {
+  return localStorage.getItem("token");
+};
+
+// Получить транзакции за период
+const getTransactionsByPeriod = async (startDate, endDate) => {
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error("No auth token found");
+    }
+
+    const formatDateForAPI = (date) => {
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const year = date.getFullYear();
+      return `${month}-${day}-${year}`;
+    };
+
+    const response = await fetch(`${API_BASE_URL}/period`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        start: formatDateForAPI(startDate),
+        end: formatDateForAPI(endDate),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching transactions by period:", error);
+    throw error;
+  }
+};
+
+// Маппинг категорий API на русские названия
+const categoryMapping = {
+  food: "Еда",
+  transport: "Транспорт",
+  housing: "Жилье",
+  joy: "Развлечения",
+  education: "Образование",
+  others: "Другое",
+};
+
 // Стилизованные компоненты
 const SPageContainer = styled.div`
   padding: 32px 0;
@@ -392,6 +446,34 @@ const SPeriodButton = styled.button.attrs((props) => ({
   transition: all 0.3s ease;
 `;
 
+const SLoadingText = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 16px;
+`;
+
+const SErrorText = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #ff4444;
+  font-size: 16px;
+`;
+
+const SRetryButton = styled.button`
+  background: #1fa46c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 10px;
+
+  &:hover {
+    background: #188c5c;
+  }
+`;
+
 // Компонент переключения периода для десктопа
 const DesktopPeriodSwitcher = ({ activePeriod, onPeriodChange }) => {
   return (
@@ -630,163 +712,39 @@ const SpendAnalysisPage = () => {
   const [selectedDates, setSelectedDates] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const chartRef = useRef(null);
 
-  // ГЕНЕРИРУЕМ данные для ВСЕХ дней всех месяцев
-  const generateExpensesData = () => {
-    const data = {};
-    const months = [
-      { year: 2024, month: 0, name: "Январь" },
-      { year: 2024, month: 1, name: "Февраль" },
-      { year: 2024, month: 2, name: "Март" },
-      { year: 2024, month: 3, name: "Апрель" },
-      { year: 2024, month: 4, name: "Май" },
-      { year: 2024, month: 5, name: "Июнь" },
-      { year: 2024, month: 6, name: "Июль" },
-      { year: 2024, month: 7, name: "Август" },
-      { year: 2024, month: 8, name: "Сентябрь" },
-      { year: 2024, month: 9, name: "Октябрь" },
-      { year: 2024, month: 10, name: "Ноябрь" },
-      { year: 2024, month: 11, name: "Декабрь" },
-      { year: 2025, month: 0, name: "Январь" },
-      { year: 2025, month: 1, name: "Февраль" },
-    ];
+  // Функция для загрузки транзакций за выбранный период
+  const fetchTransactionsForPeriod = async (dates) => {
+    if (dates.length === 0) return;
 
-    // Базовые расходы по категориям для разных месяцев
-    const baseExpenses = {
-      0: {
-        food: 15000,
-        transport: 10000,
-        housing: 15000,
-        entertainment: 8000,
-        education: 5000,
-        other: 4000,
-      }, // Январь
-      1: {
-        food: 14000,
-        transport: 9500,
-        housing: 15000,
-        entertainment: 7500,
-        education: 4500,
-        other: 3500,
-      }, // Февраль
-      2: {
-        food: 16000,
-        transport: 11000,
-        housing: 15000,
-        entertainment: 9000,
-        education: 5500,
-        other: 4500,
-      }, // Март
-      3: {
-        food: 17000,
-        transport: 12000,
-        housing: 15000,
-        entertainment: 10000,
-        education: 6000,
-        other: 5000,
-      }, // Апрель
-      4: {
-        food: 18000,
-        transport: 13000,
-        housing: 15000,
-        entertainment: 11000,
-        education: 6500,
-        other: 5500,
-      }, // Май
-      5: {
-        food: 19000,
-        transport: 14000,
-        housing: 15000,
-        entertainment: 12000,
-        education: 7000,
-        other: 6000,
-      }, // Июнь
-      6: {
-        food: 20000,
-        transport: 15000,
-        housing: 15000,
-        entertainment: 13000,
-        education: 7500,
-        other: 6500,
-      }, // Июль
-      7: {
-        food: 21000,
-        transport: 16000,
-        housing: 15000,
-        entertainment: 14000,
-        education: 8000,
-        other: 7000,
-      }, // Август
-      8: {
-        food: 19000,
-        transport: 14000,
-        housing: 15000,
-        entertainment: 12000,
-        education: 7000,
-        other: 6000,
-      }, // Сентябрь
-      9: {
-        food: 18000,
-        transport: 13000,
-        housing: 15000,
-        entertainment: 11000,
-        education: 6500,
-        other: 5500,
-      }, // Октябрь
-      10: {
-        food: 17000,
-        transport: 12000,
-        housing: 15000,
-        entertainment: 10000,
-        education: 6000,
-        other: 5000,
-      }, // Ноябрь
-      11: {
-        food: 22000,
-        transport: 17000,
-        housing: 15000,
-        entertainment: 15000,
-        education: 9000,
-        other: 8000,
-      }, // Декабрь
-    };
+    setLoading(true);
+    setError(null);
 
-    months.forEach(({ year, month }) => {
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const base = baseExpenses[month] || baseExpenses[6]; // fallback к июлю
+    try {
+      const datesToCalculate = getSelectedDays(dates);
+      if (datesToCalculate.length === 0) return;
 
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day);
-        const dateKey = date.toISOString().split("T")[0];
+      // Находим минимальную и максимальную дату
+      const sortedDates = [...datesToCalculate].sort((a, b) => a - b);
+      const startDate = sortedDates[0];
+      const endDate = sortedDates[sortedDates.length - 1];
 
-        // Добавляем случайные вариации к базовым расходам (±20%)
-        const variation = 0.8 + Math.random() * 0.4; // от 0.8 до 1.2
-
-        data[dateKey] = {
-          food: Math.round((base.food * variation) / 30), // делим на 30 дней для дневных расходов
-          transport: Math.round((base.transport * variation) / 30),
-          housing: Math.round(base.housing / 30), // жилье обычно постоянное
-          entertainment: Math.round((base.entertainment * variation) / 30),
-          education: Math.round((base.education * variation) / 30),
-          other: Math.round((base.other * variation) / 30),
-        };
-      }
-    });
-
-    return data;
+      const transactionsData = await getTransactionsByPeriod(
+        startDate,
+        endDate
+      );
+      setTransactions(transactionsData);
+    } catch (err) {
+      console.error("Failed to fetch transactions:", err);
+      setError("Ошибка при загрузке транзакций. Проверьте авторизацию.");
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const expensesData = generateExpensesData();
-
-  const backgroundColors = [
-    "#D9B6FF", // Еда
-    "#FFB53D", // Транспорт
-    "#6EE4FE", // Жилье
-    "#B0AEFF", // Развлечения
-    "#BCEC30", // Образование
-    "#FFB9B8", // Другое
-  ];
 
   // Функция для получения всех дней месяца
   const getDaysInMonth = (year, month) => {
@@ -810,8 +768,8 @@ const SpendAnalysisPage = () => {
   };
 
   // Функция для получения дней для расчета
-  const getSelectedDays = () => {
-    if (selectedDates.length === 0) {
+  const getSelectedDays = (dates = selectedDates) => {
+    if (dates.length === 0) {
       // Период по умолчанию: 29 июля - 4 августа 2024
       return [
         new Date(2024, 6, 29),
@@ -824,13 +782,13 @@ const SpendAnalysisPage = () => {
       ];
     }
 
-    const currentMode = detectSelectionMode(selectedDates);
+    const currentMode = detectSelectionMode(dates);
 
     if (currentMode === "months") {
       // Режим выбора месяцев - берем все дни выбранных месяцев
       const monthsMap = new Map();
 
-      selectedDates.forEach((date) => {
+      dates.forEach((date) => {
         const year = date.getFullYear();
         const month = date.getMonth();
         const key = `${year}-${month}`;
@@ -849,45 +807,37 @@ const SpendAnalysisPage = () => {
       return allDays;
     } else {
       // Режим выбора дней - берем только выбранные дни
-      return [...selectedDates].sort((a, b) => a - b);
+      return [...dates].sort((a, b) => a - b);
     }
   };
 
-  // Расчет данных для графика
+  // Расчет данных для графика на основе реальных транзакций
   const calculateChartData = () => {
     const categorySums = {
       food: 0,
       transport: 0,
       housing: 0,
-      entertainment: 0,
+      joy: 0,
       education: 0,
-      other: 0,
+      others: 0,
     };
 
-    const datesToCalculate = getSelectedDays();
-
-    datesToCalculate.forEach((date) => {
-      const dateKey = date.toISOString().split("T")[0];
-      const dayExpenses = expensesData[dateKey];
-
-      if (dayExpenses) {
-        categorySums.food += dayExpenses.food;
-        categorySums.transport += dayExpenses.transport;
-        categorySums.housing += dayExpenses.housing;
-        categorySums.entertainment += dayExpenses.entertainment;
-        categorySums.education += dayExpenses.education;
-        categorySums.other += dayExpenses.other;
+    // Группируем транзакции по категориям
+    transactions.forEach((transaction) => {
+      const category = transaction.category;
+      if (categorySums.hasOwnProperty(category)) {
+        categorySums[category] += transaction.sum;
       }
     });
 
     return {
       labels: [
-        "Еда",
-        "Транспорт",
-        "Жилье",
-        "Развлечения",
-        "Образование",
-        "Другое",
+        categoryMapping.food,
+        categoryMapping.transport,
+        categoryMapping.housing,
+        categoryMapping.joy,
+        categoryMapping.education,
+        categoryMapping.others,
       ],
       datasets: [
         {
@@ -896,9 +846,9 @@ const SpendAnalysisPage = () => {
             categorySums.food,
             categorySums.transport,
             categorySums.housing,
-            categorySums.entertainment,
+            categorySums.joy,
             categorySums.education,
-            categorySums.other,
+            categorySums.others,
           ],
           backgroundColor: backgroundColors,
           borderRadius: 8,
@@ -910,25 +860,23 @@ const SpendAnalysisPage = () => {
     };
   };
 
-  // Расчет общей суммы
+  // Расчет общей суммы на основе реальных транзакций
   const calculateTotalAmount = () => {
-    const datesToCalculate = getSelectedDays();
-
-    let total = 0;
-    datesToCalculate.forEach((date) => {
-      const dateKey = date.toISOString().split("T")[0];
-      const dayExpenses = expensesData[dateKey];
-
-      if (dayExpenses) {
-        total += Object.values(dayExpenses).reduce(
-          (sum, expense) => sum + expense,
-          0
-        );
-      }
-    });
-
-    return total;
+    return transactions.reduce(
+      (total, transaction) => total + transaction.sum,
+      0
+    );
   };
+
+  // Цвета для категорий
+  const backgroundColors = [
+    "#D9B6FF", // Еда
+    "#FFB53D", // Транспорт
+    "#6EE4FE", // Жилье
+    "#B0AEFF", // Развлечения
+    "#BCEC30", // Образование
+    "#FFB9B8", // Другое
+  ];
 
   // ВАЖНО: Вызываем функции расчета на каждом рендере
   const chartData = calculateChartData();
@@ -1014,6 +962,32 @@ const SpendAnalysisPage = () => {
     };
   }, [isMobile]);
 
+  // Эффект для загрузки данных при изменении выбранных дат
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Пожалуйста, войдите в систему для просмотра анализа расходов");
+      setLoading(false);
+      return;
+    }
+
+    if (selectedDates.length > 0) {
+      fetchTransactionsForPeriod(selectedDates);
+    } else {
+      // Установка дат по умолчанию при первом рендере
+      const defaultDates = [
+        new Date(2024, 6, 29),
+        new Date(2024, 6, 30),
+        new Date(2024, 6, 31),
+        new Date(2024, 7, 1),
+        new Date(2024, 7, 2),
+        new Date(2024, 7, 3),
+        new Date(2024, 7, 4),
+      ];
+      setSelectedDates(defaultDates);
+    }
+  }, [selectedDates]);
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -1032,11 +1006,16 @@ const SpendAnalysisPage = () => {
       const exists = prev.some((d) => d.getTime() === date.getTime());
 
       if (exists) {
-        return prev.filter((d) => d.getTime() !== date.getTime());
+        const newDates = prev.filter((d) => d.getTime() !== date.getTime());
+        return newDates;
       } else {
         return [...prev, date];
       }
     });
+  };
+
+  const handleRetry = () => {
+    fetchTransactionsForPeriod(selectedDates);
   };
 
   const getSelectedPeriodText = () => {
@@ -1120,9 +1099,47 @@ const SpendAnalysisPage = () => {
                 <BaseButton
                   text="Выбрать период"
                   onClick={() => setShowCalendar(false)}
-                  active={true}
+                  $active={true}
                 />
               </SConfirmButtonWrapper>
+            </SPageContainer>
+          </SContainer>
+        </SGlobalWrapper>
+      </>
+    );
+  }
+
+  // Компоненты для состояний загрузки и ошибки
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <SGlobalWrapper>
+          <SContainer>
+            <SPageContainer>
+              <STitle>Анализ расходов</STitle>
+              <SLoadingText>Загрузка данных...</SLoadingText>
+            </SPageContainer>
+          </SContainer>
+        </SGlobalWrapper>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <SGlobalWrapper>
+          <SContainer>
+            <SPageContainer>
+              <STitle>Анализ расходов</STitle>
+              <SErrorText>{error}</SErrorText>
+              <div style={{ textAlign: "center", marginTop: "16px" }}>
+                <SRetryButton onClick={handleRetry}>
+                  Повторить попытку
+                </SRetryButton>
+              </div>
             </SPageContainer>
           </SContainer>
         </SGlobalWrapper>
@@ -1158,7 +1175,7 @@ const SpendAnalysisPage = () => {
                 <BaseButton
                   text="Выбрать другой период"
                   onClick={() => setShowCalendar(true)}
-                  active={true}
+                  $active={true}
                 />
               </SButtonWrapper>
             </SPageContainer>
