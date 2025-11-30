@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
 import { BaseInput } from "./ui/Input";
 import { BaseButton } from "./ui/Button";
+import { signIn, signUp } from "../services/auth";
+import { AuthContext } from "../context/AuthContext";
 // import SContainer from "./Container.styled";
 // import SGlobalWrapper from "./GlobalWrapper.styled";
 // import Header from "./Header/Header";
@@ -48,21 +50,26 @@ const ButtonWrapper = styled.div`
     margin-top: 12px;
 `;
 
-export const AuthForm = ({ mode = "login", onSwitchMode }) => {
+export const AuthForm = ({ mode = "login", onSwitchMode, onSuccess }) => {
+    const { login } = useContext(AuthContext);
+
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
     const [touched, setTouched] = useState({
         name: false,
         email: false,
         password: false,
     });
-    const [hasError, setHasError] = useState(false);
+
+    const [errorText, setErrorText] = useState("");
 
     // Валидация
-    const validateEmail = (value) => !value.includes("@");
-    const validatePassword = (value) => value.length < 6;
-    const validateName = (value) => mode === "register" && value.length < 2;
+    const validateEmail = (v) => !v.includes("@");
+    const validatePassword = (v) => v.length < 6;
+    const validateName = (v) => mode === "register" && v.length < 2;
+
     const nameError = touched.name && validateName(name);
     const emailError = touched.email && validateEmail(email);
     const passwordError = touched.password && validatePassword(password);
@@ -76,27 +83,33 @@ export const AuthForm = ({ mode = "login", onSwitchMode }) => {
             !validateEmail(email) &&
             !validatePassword(password));
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setTouched({ email: true, password: true, name: true });
+        setTouched({ name: true, email: true, password: true });
 
-        if (!isFormValid) {
-            setHasError(true);
-            return;
+        if (!isFormValid) return;
+
+        setErrorText("");
+
+        try {
+            let user;
+
+            if (mode === "login") {
+                user = await signIn({ login: email, password });
+            } else {
+                user = await signUp({
+                    name: name.trim(),
+                    login: email,
+                    password,
+                });
+            }
+
+            login(user);
+            onSuccess?.();
+        } catch (err) {
+            setErrorText(err.message);
         }
-
-        setHasError(false);
-
-        const formData =
-            mode === "register"
-                ? { name: name.trim(), email, password }
-                : { email, password };
-
-        setName("");
-        setEmail("");
-        setPassword("");
-        setTouched({ name: false, email: false, password: false });
     };
 
     return (
@@ -107,33 +120,28 @@ export const AuthForm = ({ mode = "login", onSwitchMode }) => {
                 </h2>
                 {mode === "register" && (
                     <BaseInput
-                        label="Имя"
                         value={name}
                         onChange={(e) => {
                             setName(e.target.value);
-                            setTouched((prev) => ({ ...prev, name: true }));
+                            setTouched((t) => ({ ...t, name: true }));
                         }}
                         error={nameError}
                         valid={!nameError && name !== ""}
-                        mode="login"
                         placeholder="Имя"
                     />
                 )}
                 <BaseInput
-                    label="Почта"
                     value={email}
                     onChange={(e) => {
                         setEmail(e.target.value);
-                        setTouched((prev) => ({ ...prev, email: true }));
+                        setTouched((t) => ({ ...t, email: true }));
                     }}
                     error={emailError}
                     valid={!emailError && email !== ""}
-                    mode="login"
                     placeholder="Эл. почта"
                 />
 
                 <BaseInput
-                    label="Пароль"
                     type="password"
                     value={password}
                     onChange={(e) => {
@@ -153,21 +161,17 @@ export const AuthForm = ({ mode = "login", onSwitchMode }) => {
                     />
                 </ButtonWrapper>
 
-                {hasError && (
-                    <ErrorMessage>
-                        Упс! Введенные вами данные некорректны. <br />
-                        Введите данные корректно и повторите попытку.
-                    </ErrorMessage>
-                )}
+                {errorText && <ErrorMessage>{errorText}</ErrorMessage>}
+
                 <SwitchText>
                     {mode === "login" ? (
                         <>
-                            <p>Нужно зарегистрироваться? </p>
+                            <p>Нужно зарегистрироваться?</p>
                             <a onClick={onSwitchMode}>Регистрируйтесь здесь</a>
                         </>
                     ) : (
                         <>
-                            <p>Уже есть аккаунт? </p>
+                            <p>Уже есть аккаунт?</p>
                             <a onClick={onSwitchMode}>Войдите здесь</a>
                         </>
                     )}

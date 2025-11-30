@@ -1,11 +1,14 @@
-import GlobalStyles from "../src/components/GlobalStyles";
+import GlobalStyle from "../src/components/GlobalStyles";
 import AppRoutes from "./AppRoutes";
+import AuthProvider from "./context/AuthProvider";
 
 function App() {
     return (
         <>
-            <GlobalStyles />
-            <AppRoutes />
+            <AuthProvider>
+                <GlobalStyle />
+                <AppRoutes />
+            </AuthProvider>
         </>
     );
 }

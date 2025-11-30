@@ -33,6 +33,7 @@ const LoginPage = () => {
                     <AuthForm
                         mode="login"
                         onSwitchMode={() => navigate("/register")}
+                        onSuccess={() => navigate("/")}
                     />
                 </AuthFormWrapper>
             </SGlobalWrapper>
