@@ -9,11 +9,12 @@ import { SpendsContext } from "../../context/SpendsContext";
 export const MainTable = () => {
   const {
     spends,
-    isSpendSelected,
-    setIsSpendSelected,
+    isSpendSelected, setIsSpendSelected,
     handleSendClick
   } = useContext(SpendsContext);
-  
+
+  console.log(spends);
+
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [isSortActive, setIsSortActive] = useState(false);
   const popRef = useRef(null);
@@ -104,7 +105,7 @@ export const MainTable = () => {
       <STableContent>
         {spends.map((spend) =>
           <MainTableRow key={spend._id}
-          spend={spend} isSpendSelected={isSpendSelected} onClick={handleSendClick} 
+            spend={spend} isSpendSelected={isSpendSelected} onClick={handleSendClick}
           />
         )}
       </STableContent>

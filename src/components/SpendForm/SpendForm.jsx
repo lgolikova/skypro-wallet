@@ -10,7 +10,7 @@ import { SpendsContext } from "../../context/SpendsContext";
 
 export const SpendForm = () => {
   const {
-    isSpendSelected,
+    isSpendSelected, setIsSpendSelected,
     addSpend,
     newSpendDescription, setNewSpendDescription,
     newSpendCategory, setNewSpendCategory,
