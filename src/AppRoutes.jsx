@@ -7,11 +7,19 @@ import NotFoundPage from "./pages/NotFoundPage";
 import RegisterPage from "./pages/RegisterPage";
 import SpendAnalysisPage from "./pages/SpendAnalysisPage";
 import { transactions } from "./data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 function AppRoutes() {
-    const [spends, setSpends] = useState(transactions);
+    const [spends, setSpends] = useState(() => {
+        const savedSpends = localStorage.getItem("spends");
+
+        if (savedSpends) {
+            return JSON.parse(savedSpends);
+        }
+
+        return transactions;
+    });
 
     const [isSpendSelected, setIsSpendSelected] = useState("");
     const [newSpendDescription, setNewSpendDescription] = useState("");
@@ -25,10 +33,10 @@ function AppRoutes() {
     };
 
     const addSpend = ({
-      description,
-      category,
-      date,
-      sum,
+        description,
+        category,
+        date,
+        sum,
     }) => {
         if (newSpendDescription.trim().length > 0) {
             const newSpend = {
@@ -46,10 +54,12 @@ function AppRoutes() {
             setNewSpendDate("");
             setNewSpendSum("");
         }
+    };
 
-        console.log("Нажали кнопку 'Добавить новый расход'");
-        console.log(spends);
-    }
+    useEffect(() => {
+        localStorage.setItem("spends", JSON.stringify(spends));
+    }, [spends]);
+
 
     return (
         <Routes>
