@@ -64,6 +64,7 @@ export const BaseInput = ({
     label,
     value,
     onChange,
+    onInput,
     error,
     valid,
     mode = "spend",
@@ -83,6 +84,7 @@ export const BaseInput = ({
                     type={type}
                     value={value}
                     onChange={onChange}
+                    onInput={onInput}
                     error={error}
                     valid={!error && valid}
                     placeholder={placeholder}

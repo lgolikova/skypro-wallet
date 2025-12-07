@@ -1,9 +1,9 @@
 import { SWrapper, SContent, SIcon, STitle } from "./Category.styled";
 
 
-export const Category = ({ onClick, name, icon }) => {
+export const Category = ({ onClick, name, icon, newSpendCategory }) => {
   return (
-    <SWrapper>
+    <SWrapper newSpendCategory={newSpendCategory}>
       <SContent
         onClick={(e) => {
           e.stopPropagation();// заблокировать всплытие

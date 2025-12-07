@@ -11,18 +11,51 @@ import { useState } from "react";
 
 
 function AppRoutes() {
+    const [spends, setSpends] = useState(transactions);
+
     const [isSpendSelected, setIsSpendSelected] = useState("");
+    const [newSpendDescription, setNewSpendDescription] = useState("");
+    const [newSpendCategory, setNewSpendCategory] = useState("");
+    const [newSpendDate, setNewSpendDate] = useState("");
+    const [newSpendSum, setNewSpendSum] = useState("");
 
     const handleSendClick = (sendId) => {
-        // console.log(`кликнули по строчке с id=${sendId}`);
+        console.log(`кликнули по строчке с id=${sendId}`);
         setIsSpendSelected(sendId);
     };
 
+    const addSpend = ({
+      description,
+      category,
+      date,
+      sum,
+    }) => {
+        if (newSpendDescription.trim().length > 0) {
+            const newSpend = {
+                _id: crypto?.randomUUID() ?? Date.now().toString(),
+                description,
+                category,
+                date,
+                sum,
+            };
+
+            setSpends((prevSpends) => [...prevSpends, newSpend]);
+
+            setNewSpendDescription("");
+            setNewSpendCategory("");
+            setNewSpendDate("");
+            setNewSpendSum("");
+        }
+
+        console.log("Нажали кнопку 'Добавить новый расход'");
+        console.log(spends);
+    }
+
     return (
         <Routes>
-            <Route path="/" element={<MainPage transactions={transactions} isSpendSelected={isSpendSelected} onclick={handleSendClick}/>}>
+            <Route path="/" element={<MainPage spends={spends} isSpendSelected={isSpendSelected} onclick={handleSendClick} addSpend={addSpend} newSpendDescription={newSpendDescription} setNewSpendDescription={setNewSpendDescription} newSpendCategory={newSpendCategory} setNewSpendCategory={setNewSpendCategory} newSpendDate={newSpendDate} setNewSpendDate={setNewSpendDate} newSpendSum={newSpendSum} setNewSpendSum={setNewSpendSum} />}>
                 <Route path="spend/new" element={<NewSpendPage />} />
-                <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected}/>} />
+                <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected} />} />
             </Route>
             <Route path="/spend-analysis" element={<SpendAnalysisPage />} />
             <Route path="/login" element={<LoginPage />} />

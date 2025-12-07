@@ -5,7 +5,7 @@ import actionIcon from "../../assets/icons/actions.svg";
 import { DropdownListFilter, DropdownListSort } from "../DropdownList/DropdownList";
 
 
-export const MainTable = ({ transactions, isSpendSelected, onclick }) => {
+export const MainTable = ({ spends, isSpendSelected, onclick }) => {
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [isSortActive, setIsSortActive] = useState(false);
   const popRef = useRef(null);
@@ -94,8 +94,8 @@ export const MainTable = ({ transactions, isSpendSelected, onclick }) => {
       </STableHeaderWrapper>
 
       <STableContent>
-        {transactions.map((transaction) =>
-          <MainTableRow key={transaction._id} transaction={transaction} isSpendSelected={isSpendSelected} onClick={onclick} />
+        {spends.map((spend) =>
+          <MainTableRow key={spend._id} spend={spend} isSpendSelected={isSpendSelected} onClick={onclick} />
         )}
       </STableContent>
     </STableWrapper>

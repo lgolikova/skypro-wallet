@@ -7,10 +7,10 @@ import { SRowWrapper, STableRow, SItem, SIconsWrapper, SIcon } from "./MainTable
 import { format } from "date-fns";
 
 
-export const MainTableRow = ({ transaction, isSpendSelected, onClick }) => {
+export const MainTableRow = ({ spend, isSpendSelected, onClick }) => {
   // const isActive = false;
   // console.log("transaction._id: ", transaction._id);
-  const isSelected = isSpendSelected === transaction._id;
+  const isSelected = isSpendSelected === spend._id;
   // console.log("isSelected: ", isSelected);
   const categoryMap = categories.reduce((acc, category) => {
     acc[category.value] = category.label;
@@ -19,12 +19,12 @@ export const MainTableRow = ({ transaction, isSpendSelected, onClick }) => {
 
   return (
     <>
-      <SRowWrapper onClick={() => onClick(transaction._id)} >
+      <SRowWrapper onClick={() => onClick(spend._id)} >
         <STableRow $isSpendSelected={isSelected}>
-          <SItem $isSpendSelected={isSelected}>{transaction.description}</SItem>
-          <SItem $isSpendSelected={isSelected}>{categoryMap[transaction.category]}</SItem>
-          <SItem $isSpendSelected={isSelected} style={{ width: "142px" }}>{format(new Date(transaction.date), "dd.MM.yyyy")}</SItem>
-          <SItem $isSpendSelected={isSelected} style={{ width: "134px" }}>{transaction.sum.toLocaleString('ru-RU')} &#8381;</SItem>
+          <SItem $isSpendSelected={isSelected}>{spend.description}</SItem>
+          <SItem $isSpendSelected={isSelected}>{categoryMap[spend.category]}</SItem>
+          <SItem $isSpendSelected={isSelected} style={{ width: "142px" }}>{format(new Date(spend.date), "dd.MM.yyyy")}</SItem>
+          <SItem $isSpendSelected={isSelected} style={{ width: "134px" }}>{spend.sum.toLocaleString('ru-RU')} &#8381;</SItem>
           <SIconsWrapper>
             <SIcon src={isSelected ? editIconActive : editIcon} alt="редактировать" />
             <SIcon src={isSelected ? deleteIconActive : deleteIcon} alt="удалить" />

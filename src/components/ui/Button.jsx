@@ -29,12 +29,12 @@ const SButton = styled.button`
     }
 `;
 
-export const BaseButton = ({ text, active = true, onClick }) => {
+export const BaseButton = ({ text, active = "true", onClick }) => {
     return (
         <SButton
             type="submit"
             active={active}
-            onClick={onClick}
+            onClick={() => onClick()}
             disabled={!active}
         >
             {text}
