@@ -6,7 +6,6 @@ import { DropdownListFilter, DropdownListSort } from "../DropdownList/DropdownLi
 import { SpendsContext } from "../../context/SpendsContext";
 
 
-// export const MainTable = ({ spends, isSpendSelected, onclick }) => {
 export const MainTable = () => {
   const {
     spends,
@@ -14,6 +13,7 @@ export const MainTable = () => {
     setIsSpendSelected,
     handleSendClick
   } = useContext(SpendsContext);
+  
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [isSortActive, setIsSortActive] = useState(false);
   const popRef = useRef(null);

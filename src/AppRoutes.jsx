@@ -75,9 +75,7 @@ function AppRoutes() {
                 newSpendSum, setNewSpendSum,
             }}>
             <Routes>
-                <Route path="/" element={<MainPage
-                // spends={spends} isSpendSelected={isSpendSelected} onclick={handleSendClick} addSpend={addSpend} newSpendDescription={newSpendDescription} setNewSpendDescription={setNewSpendDescription} newSpendCategory={newSpendCategory} setNewSpendCategory={setNewSpendCategory} newSpendDate={newSpendDate} setNewSpendDate={setNewSpendDate} newSpendSum={newSpendSum} setNewSpendSum={setNewSpendSum}
-                 />}>
+                <Route path="/" element={<MainPage />}>
                     <Route path="spend/new" element={<NewSpendPage />} />
                     <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected} />} />
                 </Route>

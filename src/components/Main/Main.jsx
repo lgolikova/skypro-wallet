@@ -6,7 +6,6 @@ import { MainTable } from "../MainTable/MainTable";
 import { SpendForm } from "../SpendForm/SpendForm";
 
 
-// export const Main = ({spends, isSpendSelected, onclick, addSpend, newSpendDescription, setNewSpendDescription, newSpendCategory, setNewSpendCategory, newSpendDate, setNewSpendDate, newSpendSum, setNewSpendSum}) => {
 export const Main = () => {
   return (
     <>
@@ -15,12 +14,8 @@ export const Main = () => {
         <SContainer>
           <STitle>Мои расходы</STitle>
           <SContentWrapper>
-            <MainTable
-            // spends={spends} isSpendSelected={isSpendSelected} onclick={onclick}
-            />
-            <SpendForm
-            // addSpend={addSpend} newSpendDescription={newSpendDescription} setNewSpendDescription={setNewSpendDescription} newSpendCategory={newSpendCategory} setNewSpendCategory={setNewSpendCategory} newSpendDate={newSpendDate} setNewSpendDate={setNewSpendDate} newSpendSum={newSpendSum} setNewSpendSum={setNewSpendSum}
-            />
+            <MainTable />
+            <SpendForm />
           </SContentWrapper>
         </SContainer>
       </SGlobalWrapper>
