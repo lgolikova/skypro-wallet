@@ -4,9 +4,21 @@ import { Category } from "../category/Category";
 import { SFormWrapper, SFormTitle, SBlockWrapper, SBlockTitle, SCategoriesWrapper } from "./SpendForm.styled";
 import { categories } from "../../utils/categories";
 import { parse, format } from "date-fns";
+import { useContext } from "react";
+import { SpendsContext } from "../../context/SpendsContext";
 
 
-export const SpendForm = ({ isSpendSelected, addSpend, newSpendDescription, setNewSpendDescription, newSpendCategory, setNewSpendCategory, newSpendDate, setNewSpendDate, newSpendSum, setNewSpendSum }) => {
+// export const SpendForm = ({ isSpendSelected, addSpend, newSpendDescription, setNewSpendDescription, newSpendCategory, setNewSpendCategory, newSpendDate, setNewSpendDate, newSpendSum, setNewSpendSum }) => {
+export const SpendForm = () => {
+  const {
+    isSpendSelected,
+    addSpend,
+    newSpendDescription, setNewSpendDescription,
+    newSpendCategory, setNewSpendCategory,
+    newSpendDate, setNewSpendDate,
+    newSpendSum, setNewSpendSum,
+  } = useContext(SpendsContext);
+  
   const isNewSpend = true;
 
   // console.log("isSpendSelected в SpendForm: ", isSpendSelected)

@@ -1,11 +1,19 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { STableWrapper, STableHeaderWrapper, STableTopWrapper, STableTitle, SActionsWrapper, SActionWrapper, SColumnNamesWrapper, SColumnName, STableContent, SFilterTitle, SSortTitle, SFlag, SActionIcon, SDropdownListWrapper } from "./MainTable.styled";
 import { MainTableRow } from "../MainTableRow/MainTableRow";
 import actionIcon from "../../assets/icons/actions.svg";
 import { DropdownListFilter, DropdownListSort } from "../DropdownList/DropdownList";
+import { SpendsContext } from "../../context/SpendsContext";
 
 
-export const MainTable = ({ spends, isSpendSelected, onclick }) => {
+// export const MainTable = ({ spends, isSpendSelected, onclick }) => {
+export const MainTable = () => {
+  const {
+    spends,
+    isSpendSelected,
+    setIsSpendSelected,
+    handleSendClick
+  } = useContext(SpendsContext);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [isSortActive, setIsSortActive] = useState(false);
   const popRef = useRef(null);
@@ -95,7 +103,9 @@ export const MainTable = ({ spends, isSpendSelected, onclick }) => {
 
       <STableContent>
         {spends.map((spend) =>
-          <MainTableRow key={spend._id} spend={spend} isSpendSelected={isSpendSelected} onClick={onclick} />
+          <MainTableRow key={spend._id}
+          spend={spend} isSpendSelected={isSpendSelected} onClick={handleSendClick} 
+          />
         )}
       </STableContent>
     </STableWrapper>

@@ -8,6 +8,7 @@ import RegisterPage from "./pages/RegisterPage";
 import SpendAnalysisPage from "./pages/SpendAnalysisPage";
 import { transactions } from "./data";
 import { useEffect, useState } from "react";
+import { SpendsContext } from "./context/SpendsContext";
 
 
 function AppRoutes() {
@@ -62,16 +63,30 @@ function AppRoutes() {
 
 
     return (
-        <Routes>
-            <Route path="/" element={<MainPage spends={spends} isSpendSelected={isSpendSelected} onclick={handleSendClick} addSpend={addSpend} newSpendDescription={newSpendDescription} setNewSpendDescription={setNewSpendDescription} newSpendCategory={newSpendCategory} setNewSpendCategory={setNewSpendCategory} newSpendDate={newSpendDate} setNewSpendDate={setNewSpendDate} newSpendSum={newSpendSum} setNewSpendSum={setNewSpendSum} />}>
-                <Route path="spend/new" element={<NewSpendPage />} />
-                <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected} />} />
-            </Route>
-            <Route path="/spend-analysis" element={<SpendAnalysisPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <SpendsContext.Provider
+            value={{
+                spends,
+                isSpendSelected,
+                handleSendClick,
+                addSpend,
+                newSpendDescription, setNewSpendDescription,
+                newSpendCategory, setNewSpendCategory,
+                newSpendDate, setNewSpendDate,
+                newSpendSum, setNewSpendSum,
+            }}>
+            <Routes>
+                <Route path="/" element={<MainPage
+                // spends={spends} isSpendSelected={isSpendSelected} onclick={handleSendClick} addSpend={addSpend} newSpendDescription={newSpendDescription} setNewSpendDescription={setNewSpendDescription} newSpendCategory={newSpendCategory} setNewSpendCategory={setNewSpendCategory} newSpendDate={newSpendDate} setNewSpendDate={setNewSpendDate} newSpendSum={newSpendSum} setNewSpendSum={setNewSpendSum}
+                 />}>
+                    <Route path="spend/new" element={<NewSpendPage />} />
+                    <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected} />} />
+                </Route>
+                <Route path="/spend-analysis" element={<SpendAnalysisPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+        </SpendsContext.Provider>
     );
 }
 

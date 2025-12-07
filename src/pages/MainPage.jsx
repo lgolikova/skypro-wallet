@@ -7,9 +7,12 @@
 import { Main } from "../components/Main/Main";
 
 
-const MainPage = ({ spends, isSpendSelected, onclick, addSpend, newSpendDescription, setNewSpendDescription, newSpendCategory, setNewSpendCategory, newSpendDate, setNewSpendDate, newSpendSum, setNewSpendSum }) => {
+// const MainPage = ({ spends, isSpendSelected, onclick, addSpend, newSpendDescription, setNewSpendDescription, newSpendCategory, setNewSpendCategory, newSpendDate, setNewSpendDate, newSpendSum, setNewSpendSum }) => {
+const MainPage = () => {
     return (
-        <Main spends={spends} isSpendSelected={isSpendSelected} onclick={onclick} addSpend={addSpend} newSpendDescription={newSpendDescription} setNewSpendDescription={setNewSpendDescription} newSpendCategory={newSpendCategory} setNewSpendCategory={setNewSpendCategory} newSpendDate={newSpendDate} setNewSpendDate={setNewSpendDate} newSpendSum={newSpendSum} setNewSpendSum={setNewSpendSum} />
+        <Main
+        // spends={spends} isSpendSelected={isSpendSelected} onclick={onclick} addSpend={addSpend} newSpendDescription={newSpendDescription} setNewSpendDescription={setNewSpendDescription} newSpendCategory={newSpendCategory} setNewSpendCategory={setNewSpendCategory} newSpendDate={newSpendDate} setNewSpendDate={setNewSpendDate} newSpendSum={newSpendSum} setNewSpendSum={setNewSpendSum}
+        />
         // <>
         //     <SHeader />
         //     <SGlobalWrapper>
