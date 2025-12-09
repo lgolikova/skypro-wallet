@@ -49,18 +49,24 @@ export const SpendsProvider = ({ children }) => {
     }
   };
 
+  const deleteSpend = (spendId) => {
+    setSpends(
+      spends.filter((spend) => spend._id !== spendId )
+    )
+  };
+
   useEffect(() => {
     localStorage.setItem("spends", JSON.stringify(spends));
   }, [spends]);
 
-  
+
   return (
     <SpendsContext.Provider
       value={{
         spends,
         isSpendSelected, setIsSpendSelected,
         handleSendClick,
-        addSpend,
+        addSpend, deleteSpend,
         newSpendDescription, setNewSpendDescription,
         newSpendCategory, setNewSpendCategory,
         newSpendDate, setNewSpendDate,

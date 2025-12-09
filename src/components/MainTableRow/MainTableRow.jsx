@@ -5,17 +5,20 @@ import editIconActive from "../../assets/icons/edit_active.svg";
 import deleteIconActive from "../../assets/icons/delete_active.svg";
 import { SRowWrapper, STableRow, SItem, SIconsWrapper, SIcon } from "./MainTableRow.styled";
 import { format } from "date-fns";
+import { SpendsContext } from "../../context/SpendsContext";
+import { useContext } from "react";
 
 
 export const MainTableRow = ({ spend, isSpendSelected, onClick }) => {
   // const isActive = false;
-  // console.log("transaction._id: ", transaction._id);
   const isSelected = isSpendSelected === spend._id;
   // console.log("isSelected: ", isSelected);
   const categoryMap = categories.reduce((acc, category) => {
     acc[category.value] = category.label;
     return acc;
   }, {});
+
+  const {deleteSpend} = useContext(SpendsContext);
 
   return (
     <>
@@ -27,7 +30,7 @@ export const MainTableRow = ({ spend, isSpendSelected, onClick }) => {
           <SItem $isSpendSelected={isSelected} style={{ width: "134px" }}>{spend.sum.toLocaleString('ru-RU')} &#8381;</SItem>
           <SIconsWrapper>
             <SIcon src={isSelected ? editIconActive : editIcon} alt="редактировать" />
-            <SIcon src={isSelected ? deleteIconActive : deleteIcon} alt="удалить" />
+            <SIcon src={isSelected ? deleteIconActive : deleteIcon} alt="удалить" onClick={() => deleteSpend(spend._id)}/>
           </SIconsWrapper>
         </STableRow>
       </SRowWrapper>
