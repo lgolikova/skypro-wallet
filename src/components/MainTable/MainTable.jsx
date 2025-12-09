@@ -13,7 +13,6 @@ export const MainTable = () => {
     handleSendClick
   } = useContext(SpendsContext);
 
-  console.log(spends);
 
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [isSortActive, setIsSortActive] = useState(false);

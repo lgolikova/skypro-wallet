@@ -53,8 +53,7 @@ export const SpendsProvider = ({ children }) => {
     localStorage.setItem("spends", JSON.stringify(spends));
   }, [spends]);
 
-  console.log(spends);
-
+  
   return (
     <SpendsContext.Provider
       value={{
