@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { SpendsContext } from "./SpendsContext";
 import { transactions } from "../data";
+import { useNavigate } from "react-router-dom";
 
 
 export const SpendsProvider = ({ children }) => {
@@ -20,9 +21,13 @@ export const SpendsProvider = ({ children }) => {
   const [newSpendDate, setNewSpendDate] = useState("");
   const [newSpendSum, setNewSpendSum] = useState("");
 
+  const navigate = useNavigate();
+
   const handleSendEditClick = (sendId) => {
     // console.log(`кликнули по строчке с id=${sendId}`);
     setIsSpendSelected(sendId);
+
+    navigate(`/spend/${sendId}`);
   };
 
   const addSpend = ({
