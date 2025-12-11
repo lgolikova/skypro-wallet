@@ -6,6 +6,7 @@ import { categories } from "../../utils/categories";
 import { parse, format } from "date-fns";
 import { useContext } from "react";
 import { SpendsContext } from "../../context/SpendsContext";
+// import { useParams } from "react-router-dom";
 
 
 export const SpendForm = () => {
@@ -18,9 +19,14 @@ export const SpendForm = () => {
     newSpendSum, setNewSpendSum,
   } = useContext(SpendsContext);
 
-  const isNewSpend = true;
-
   // console.log("isSpendSelected в SpendForm: ", isSpendSelected)
+
+  // const { id } = useParams();
+
+  // const spend = SpendsContext.find((spend) => spend._id === id);
+
+
+  // const isNewSpend = true;
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -47,7 +53,7 @@ export const SpendForm = () => {
   return (
     <form onSubmit={onSubmit}>
       <SFormWrapper>
-        <SFormTitle>{isNewSpend ? "Новый расход" : "Редактирование"}</SFormTitle>
+        <SFormTitle>{!isSpendSelected ? "Новый расход" : "Редактирование"}</SFormTitle>
 
         <SBlockWrapper>
           <SBlockTitle>Описание</SBlockTitle>

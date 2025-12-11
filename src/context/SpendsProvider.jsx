@@ -20,7 +20,7 @@ export const SpendsProvider = ({ children }) => {
   const [newSpendDate, setNewSpendDate] = useState("");
   const [newSpendSum, setNewSpendSum] = useState("");
 
-  const handleSendClick = (sendId) => {
+  const handleSendEditClick = (sendId) => {
     // console.log(`кликнули по строчке с id=${sendId}`);
     setIsSpendSelected(sendId);
   };
@@ -65,7 +65,7 @@ export const SpendsProvider = ({ children }) => {
       value={{
         spends,
         isSpendSelected, setIsSpendSelected,
-        handleSendClick,
+        handleSendEditClick,
         addSpend, deleteSpend,
         newSpendDescription, setNewSpendDescription,
         newSpendCategory, setNewSpendCategory,

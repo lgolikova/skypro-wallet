@@ -10,7 +10,6 @@ export const MainTable = () => {
   const {
     spends,
     isSpendSelected, setIsSpendSelected,
-    handleSendClick
   } = useContext(SpendsContext);
 
 
@@ -103,8 +102,10 @@ export const MainTable = () => {
 
       <STableContent>
         {spends.map((spend) =>
-          <MainTableRow key={spend._id}
-            spend={spend} isSpendSelected={isSpendSelected} onClick={handleSendClick}
+          <MainTableRow
+            key={spend._id}
+            spend={spend}
+            isSpendSelected={isSpendSelected}
           />
         )}
       </STableContent>
