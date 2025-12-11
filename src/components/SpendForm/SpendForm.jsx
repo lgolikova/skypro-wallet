@@ -6,12 +6,13 @@ import { categories } from "../../utils/categories";
 import { parse, format } from "date-fns";
 import { useContext } from "react";
 import { SpendsContext } from "../../context/SpendsContext";
-// import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 
 export const SpendForm = () => {
   const {
-    isSpendSelected, setIsSpendSelected,
+    spends,
+    isSpendSelected,
     addSpend,
     newSpendDescription, setNewSpendDescription,
     newSpendCategory, setNewSpendCategory,
@@ -19,19 +20,15 @@ export const SpendForm = () => {
     newSpendSum, setNewSpendSum,
   } = useContext(SpendsContext);
 
-  // console.log("isSpendSelected в SpendForm: ", isSpendSelected)
 
-  // const { id } = useParams();
+  const { id } = useParams();
+  const selectedSpend = spends.find((spend) => spend._id === id);
 
-  // const spend = SpendsContext.find((spend) => spend._id === id);
-
-
-  // const isNewSpend = true;
 
   const onSubmit = (event) => {
     event.preventDefault();
 
-    // отформатировать дату
+    // отформатировать дату для записи LS
     const [day, month, year] = newSpendDate.split(".");
     // const fullYear = year.length === 2 ? (parseInt(year, 10) >= 50 ? `19${year}` : `20${year}`) : year;
     const fullYear = year.length === 2 ? `20${year}` : year;
@@ -39,16 +36,17 @@ export const SpendForm = () => {
     const parsedDate = parse(`${day}.${month}.${fullYear}`, 'dd.MM.yyyy', new Date());
     const formattedDate = format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
-    // отформатировать сумму
+    // отформатировать сумму для записи LS
     const formattedSum = parseFloat(newSpendSum.replace(/\s/g, '').replace(',', '.')).toLocaleString('ru-RU');
 
-    addSpend({
+        addSpend({
       description: newSpendDescription,
       category: newSpendCategory,
       date: formattedDate,
       sum: formattedSum,
     });
   }
+
 
   return (
     <form onSubmit={onSubmit}>
@@ -57,17 +55,31 @@ export const SpendForm = () => {
 
         <SBlockWrapper>
           <SBlockTitle>Описание</SBlockTitle>
-          <BaseInput
-            // label
-            value={newSpendDescription}
-            onInput={(event) => setNewSpendDescription(event.target.value)}
-            // onChange
-            // error
-            // valid
-            // mode
-            placeholder="Введите описание"
-          // type
-          />
+          {!isSpendSelected ?
+            <BaseInput
+              // label
+              value={newSpendDescription}
+              onInput={(event) => setNewSpendDescription(event.target.value)}
+              // onChange
+              // error
+              // valid
+              // mode
+              placeholder="Введите описание"
+            // type
+            />
+            :
+            <BaseInput
+              // label
+              value={selectedSpend.description}
+              onInput={(event) => setNewSpendDescription(event.target.value)}
+              // onChange
+              // error
+              // valid
+              // mode
+              placeholder="Введите описание"
+            // type
+            />
+          }
         </SBlockWrapper>
 
         <SBlockWrapper style={{ height: "141px" }}>
@@ -88,32 +100,60 @@ export const SpendForm = () => {
 
         <SBlockWrapper>
           <SBlockTitle>Дата</SBlockTitle>
-          <BaseInput
-            // label
-            value={newSpendDate}
-            onInput={(event) => setNewSpendDate(event.target.value)}
-            // onChange
-            // error
-            // valid
-            // mode
-            placeholder="Введите дату"
-          // type
-          />
+          {!isSpendSelected ?
+            <BaseInput
+              // label
+              value={newSpendDate}
+              onInput={(event) => setNewSpendDate(event.target.value)}
+              // onChange
+              // error
+              // valid
+              // mode
+              placeholder="Введите дату"
+            // type
+            />
+            :
+            <BaseInput
+              // label
+              value={format(selectedSpend.date, "dd.MM.yyyy")}
+              onInput={(event) => setNewSpendDate(event.target.value)}
+              // onChange
+              // error
+              // valid
+              // mode
+              placeholder="Введите дату"
+            // type
+            />
+          }
         </SBlockWrapper>
 
         <SBlockWrapper>
           <SBlockTitle>Сумма</SBlockTitle>
-          <BaseInput
-            // label
-            value={newSpendSum}
-            onInput={(event) => setNewSpendSum(event.target.value)}
-            // onChange
-            // error
-            // valid
-            // mode
-            placeholder="Введите сумму"
-          // type
-          />
+          {!isSpendSelected ?
+            <BaseInput
+              // label
+              value={newSpendSum}
+              onInput={(event) => setNewSpendSum(event.target.value)}
+              // onChange
+              // error
+              // valid
+              // mode
+              placeholder="Введите сумму"
+            // type
+            />
+            :
+            <BaseInput
+              // label
+              value={selectedSpend.sum.replace(/\s/g, '')}
+              onInput={(event) => setNewSpendSum(event.target.value)}
+              // onChange
+              // error
+              // valid
+              // mode
+              placeholder="Введите сумму"
+            // type
+            />
+          }
         </SBlockWrapper>
 
         <BaseButton

@@ -31,8 +31,15 @@ export const MainTableRow = ({ spend, isSpendSelected }) => {
           <SItem $isSpendSelected={isSelected} style={{ width: "142px" }}>{format(new Date(spend.date), "dd.MM.yyyy")}</SItem>
           <SItem $isSpendSelected={isSelected} style={{ width: "134px" }}>{spend.sum.toLocaleString('ru-RU')} &#8381;</SItem>
           <SIconsWrapper>
-            <SIcon src={isSelected ? editIconActive : editIcon} alt="редактировать" onClick={() => handleSendEditClick(spend._id)}/>
-            <SIcon src={isSelected ? deleteIconActive : deleteIcon} alt="удалить" onClick={() => deleteSpend(spend._id)}/>
+            <SIcon
+              src={isSelected ? editIconActive : editIcon}
+              alt="редактировать"
+              onClick={() => handleSendEditClick(spend._id)}
+            />
+            <SIcon
+            src={isSelected ? deleteIconActive : deleteIcon} 
+            alt="удалить"
+            onClick={() => deleteSpend(spend._id)} />
           </SIconsWrapper>
         </STableRow>
       </SRowWrapper>
