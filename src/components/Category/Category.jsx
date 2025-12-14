@@ -11,7 +11,7 @@ export const Category = ({ onClick, name, icon, newSpendCategory }) => {
 
   return (
     <SWrapper
-      newSpendCategory={newSpendCategory}
+      $newSpendCategory={newSpendCategory}
       onClick={(e) => {
         e.stopPropagation();// заблокировать всплытие
         handleCategoryClick(name)
@@ -20,7 +20,7 @@ export const Category = ({ onClick, name, icon, newSpendCategory }) => {
     >
       <SContent>
         <SIcon src={icon} alt={name} />
-        <STitle isCategorySelected={isCategorySelected}>{name}</STitle>
+        <STitle $isCategorySelected={isCategorySelected}>{name}</STitle>
       </SContent>
     </SWrapper>
   )
