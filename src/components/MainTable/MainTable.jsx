@@ -10,6 +10,7 @@ export const MainTable = () => {
   const {
     spends,
     isSpendSelected, setIsSpendSelected,
+    isCategorySelected,
   } = useContext(SpendsContext);
 
 
@@ -75,7 +76,7 @@ export const MainTable = () => {
 
             <SActionWrapper onClick={handleOpenFilter}>
               {isFilterActive &&
-                <SDropdownListWrapper ref={popRef}><DropdownListFilter onClick={handleCloseFilter} /></SDropdownListWrapper>
+                <SDropdownListWrapper ref={popRef}><DropdownListFilter onClick={handleCloseFilter} isCategorySelected={isCategorySelected}/></SDropdownListWrapper>
               }
               <SFilterTitle >Фильтровать по категории <SFlag>еда</SFlag></SFilterTitle>
               <SActionIcon src={actionIcon} alt="фильтр" $isActive={isFilterActive} />

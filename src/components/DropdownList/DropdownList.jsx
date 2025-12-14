@@ -3,16 +3,23 @@ import { Category } from "../category/Category";
 import { categories } from "../../utils/categories";
 
 
-export const DropdownListFilter = ({ onClick }) => {
+export const DropdownListFilter = ({ onClick, isCategorySelected }) => {
   return (
     <>
       <SDropdownListWrapper>
         {categories
           .filter((category) => category.icon)
           .map((category) => (
-            <Category key={category.value}
+            <Category
+              key={category.value}
               onClick={onClick}
-              name={category.label} icon={category.icon} />
+              name={category.label}
+              icon={!!isCategorySelected ?
+                category.iconActive
+                :
+                category.icon
+              }
+            />
           ))}
       </SDropdownListWrapper>
       {/* <SDropdownListWrapper >
