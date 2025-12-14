@@ -33,7 +33,7 @@ export const BaseButton = ({ text, active = "true", onClick }) => {
     return (
         <SButton
             type="submit"
-            active={active}
+            $active={active}
             onClick={() => onClick()}
             disabled={!active}
         >
