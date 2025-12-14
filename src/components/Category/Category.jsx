@@ -1,17 +1,26 @@
+import { useContext } from "react";
 import { SWrapper, SContent, SIcon, STitle } from "./Category.styled";
+import { SpendsContext } from "../../context/SpendsContext";
 
 
 export const Category = ({ onClick, name, icon, newSpendCategory }) => {
+  const {
+    isCategorySelected,
+    handleCategoryClick
+  } = useContext(SpendsContext);
+
   return (
-    <SWrapper newSpendCategory={newSpendCategory}>
-      <SContent
-        onClick={(e) => {
-          e.stopPropagation();// заблокировать всплытие
-          onClick();
-        }}
-      >
+    <SWrapper
+      newSpendCategory={newSpendCategory}
+      onClick={(e) => {
+        e.stopPropagation();// заблокировать всплытие
+        handleCategoryClick(name)
+        onClick();
+      }}
+    >
+      <SContent>
         <SIcon src={icon} alt={name} />
-        <STitle>{name}</STitle>
+        <STitle isCategorySelected={isCategorySelected}>{name}</STitle>
       </SContent>
     </SWrapper>
   )

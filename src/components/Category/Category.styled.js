@@ -5,10 +5,11 @@ export const SWrapper = styled.div`
   height: 31px;
   max-width: min-content;
   padding: 8px 20px;
-  background-color: #F4F5F6;
+  /* background-color: #F4F5F6; */
+  background-color:    ${({ newSpendCategory }) => !!newSpendCategory ? "#DBFFE9" : "#F4F5F6"};
   border-radius: 30px;
   cursor: pointer;
-`;
+  `;
 
 export const SContent = styled.div`
   display: flex;
@@ -16,7 +17,7 @@ export const SContent = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 12px;
-`;
+  `;
 
 export const SIcon = styled.img`
   height: 14px;
@@ -29,4 +30,5 @@ export const STitle = styled.p`
   line-height: 100%;
   text-align: center;
   vertical-align: middle;
+  color: ${({ isCategorySelected }) => !!isCategorySelected ? "#1FA46C" : "#000000"};
 `;

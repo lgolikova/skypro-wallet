@@ -18,6 +18,7 @@ export const SpendForm = () => {
     newSpendCategory, setNewSpendCategory,
     newSpendDate, setNewSpendDate,
     newSpendSum, setNewSpendSum,
+    isCategorySelected,
   } = useContext(SpendsContext);
 
 
@@ -39,7 +40,7 @@ export const SpendForm = () => {
     // отформатировать сумму для записи LS
     const formattedSum = parseFloat(newSpendSum.replace(/\s/g, '').replace(',', '.')).toLocaleString('ru-RU');
 
-        addSpend({
+    addSpend({
       description: newSpendDescription,
       category: newSpendCategory,
       date: formattedDate,
@@ -84,18 +85,34 @@ export const SpendForm = () => {
 
         <SBlockWrapper style={{ height: "141px" }}>
           <SBlockTitle>Категория</SBlockTitle>
+          {/* {!isSpendSelected ? */}
           <SCategoriesWrapper>
             {categories.map(
-              (category) => category.icon
-                ? <Category
+              (category) => category.icon ?
+                <Category
                   key={category.value}
                   name={category.label}
-                  icon={category.icon}
+                  icon={!!isCategorySelected ?
+                    category.iconActive
+                    :
+                    category.icon
+                  }
                   newSpendCategory={newSpendCategory}
-                  onClick={() => setNewSpendCategory(category.value)} />
+                  onClick={() => setNewSpendCategory(category.value)}
+                />
                 : null
             )}
           </SCategoriesWrapper>
+          {/* :
+            <SCategoriesWrapper>
+              <Category
+                key={selectedSpend.value}
+                name={selectedSpend.label}
+                icon={selectedSpend.icon}
+                newSpendCategory={newSpendCategory}
+                onClick={() => setNewSpendCategory(selectedSpend.value)} />
+            </SCategoriesWrapper>
+          } */}
         </SBlockWrapper>
 
         <SBlockWrapper>

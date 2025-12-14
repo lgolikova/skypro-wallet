@@ -20,6 +20,7 @@ export const SpendsProvider = ({ children }) => {
   const [newSpendCategory, setNewSpendCategory] = useState("");
   const [newSpendDate, setNewSpendDate] = useState("");
   const [newSpendSum, setNewSpendSum] = useState("");
+  const [isCategorySelected, setIsCategorySelected] = useState("");
 
   const navigate = useNavigate();
 
@@ -28,6 +29,15 @@ export const SpendsProvider = ({ children }) => {
     setIsSpendSelected(sendId);
 
     navigate(`/spend/${sendId}`);
+  };
+
+  const handleCategoryClick = (categoryName) => {
+    console.log(`кликнули по категории ${categoryName}`);
+    setIsCategorySelected(categoryName);
+
+    // установить активную иконку
+
+    // цвет текста - зелёный
   };
 
   const addSpend = ({
@@ -56,7 +66,7 @@ export const SpendsProvider = ({ children }) => {
 
   const deleteSpend = (spendId) => {
     setSpends(
-      spends.filter((spend) => spend._id !== spendId )
+      spends.filter((spend) => spend._id !== spendId)
     )
   };
 
@@ -76,6 +86,8 @@ export const SpendsProvider = ({ children }) => {
         newSpendCategory, setNewSpendCategory,
         newSpendDate, setNewSpendDate,
         newSpendSum, setNewSpendSum,
+        isCategorySelected, setIsCategorySelected,
+        handleCategoryClick,
       }}>
       {children}
     </SpendsContext.Provider>
