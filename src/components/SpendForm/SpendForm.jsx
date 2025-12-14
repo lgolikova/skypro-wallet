@@ -97,7 +97,6 @@ export const SpendForm = () => {
                     :
                     category.icon
                   }
-                  newSpendCategory={newSpendCategory}
                   onClick={() => setNewSpendCategory(category.value)}
                 />
                 : null

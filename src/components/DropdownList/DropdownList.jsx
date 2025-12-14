@@ -1,18 +1,22 @@
 import { SDropdownListWrapper, SContent, SIcon, STitle } from "./DropdownList.styled";
 import { Category } from "../category/Category";
 import { categories } from "../../utils/categories";
+import { SpendsContext } from "../../context/SpendsContext";
+import { useContext } from "react";
 
 
-export const DropdownListFilter = ({ onClick, isCategorySelected }) => {
+export const DropdownListFilter = ({ onCategorySelect, isCategorySelected }) => {
+  const { newSpendCategory } = useContext(SpendsContext);
+
   return (
     <>
-      <SDropdownListWrapper>
+      <SDropdownListWrapper $newSpendCategory={newSpendCategory}>
         {categories
           .filter((category) => category.icon)
           .map((category) => (
             <Category
               key={category.value}
-              onClick={onClick}
+              onClick={() => onCategorySelect(category.value)}
               name={category.label}
               icon={!!isCategorySelected ?
                 category.iconActive

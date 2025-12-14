@@ -9,8 +9,9 @@ import { SpendsContext } from "../../context/SpendsContext";
 export const MainTable = () => {
   const {
     spends,
-    isSpendSelected, setIsSpendSelected,
+    isSpendSelected,
     isCategorySelected,
+    setNewSpendCategory,
   } = useContext(SpendsContext);
 
 
@@ -22,8 +23,9 @@ export const MainTable = () => {
     setIsFilterActive(true);
   };
 
-  const handleCloseFilter = () => {
+  const handleCloseFilter = (categoryName) => {
     setIsFilterActive(false);
+    setNewSpendCategory(categoryName);
   };
 
   const handleClickSort = () => {
@@ -76,7 +78,12 @@ export const MainTable = () => {
 
             <SActionWrapper onClick={handleOpenFilter}>
               {isFilterActive &&
-                <SDropdownListWrapper ref={popRef}><DropdownListFilter onClick={handleCloseFilter} isCategorySelected={isCategorySelected}/></SDropdownListWrapper>
+                <SDropdownListWrapper ref={popRef}>
+                  <DropdownListFilter
+                    onCategorySelect={handleCloseFilter}
+                    isCategorySelected={isCategorySelected}
+                  />
+                </SDropdownListWrapper>
               }
               <SFilterTitle >Фильтровать по категории <SFlag>еда</SFlag></SFilterTitle>
               <SActionIcon src={actionIcon} alt="фильтр" $isActive={isFilterActive} />

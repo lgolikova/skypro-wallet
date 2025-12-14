@@ -3,10 +3,11 @@ import { SWrapper, SContent, SIcon, STitle } from "./Category.styled";
 import { SpendsContext } from "../../context/SpendsContext";
 
 
-export const Category = ({ onClick, name, icon, newSpendCategory }) => {
+export const Category = ({ onClick, name, icon}) => {
   const {
     isCategorySelected,
-    handleCategoryClick
+    handleCategoryClick,
+    newSpendCategory,
   } = useContext(SpendsContext);
 
   return (
