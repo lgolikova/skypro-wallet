@@ -24,11 +24,11 @@ export const SpendsProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
-  const handleSendEditClick = (sendId) => {
-    // console.log(`кликнули по строчке с id=${sendId}`);
-    setIsSpendSelected(sendId);
+  const handleSendEditClick = (spendId) => {
+    // console.log(`кликнули по строчке с id=${spendId}`);
+    setIsSpendSelected(spendId);
 
-    navigate(`/spend/${sendId}`);
+    navigate(`/spend/${spendId}`);
   };
 
   const handleCategoryClick = (categoryName) => {
