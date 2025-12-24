@@ -10,9 +10,13 @@ export const Category = ({ onClick, name, icon}) => {
     newSpendCategory,
   } = useContext(SpendsContext);
 
+  const isSelected = isCategorySelected === name;
+  console.log("isSelected", isSelected);
+
   return (
     <SWrapper
-      $newSpendCategory={newSpendCategory}
+      // $newSpendCategory={newSpendCategory}
+      $newSpendCategory={isSelected}
       onClick={(e) => {
         e.stopPropagation();// заблокировать всплытие
         handleCategoryClick(name)
@@ -21,7 +25,8 @@ export const Category = ({ onClick, name, icon}) => {
     >
       <SContent>
         <SIcon src={icon} alt={name} />
-        <STitle $isCategorySelected={isCategorySelected}>{name}</STitle>
+        {/* <STitle $isCategorySelected={isCategorySelected}>{name}</STitle> */}
+        <STitle $isCategorySelected={isSelected}>{name}</STitle>
       </SContent>
     </SWrapper>
   )
