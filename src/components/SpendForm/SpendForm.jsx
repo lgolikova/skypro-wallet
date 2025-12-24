@@ -92,11 +92,13 @@ export const SpendForm = () => {
                 <Category
                   key={category.value}
                   name={category.label}
-                  icon={!!isCategorySelected ?
-                    category.iconActive
-                    :
-                    category.icon
-                  }
+                  icon={category.icon}
+                  iconActive={category.iconActive}
+                  // icon={!!isCategorySelected ?
+                  //   category.iconActive
+                  //   :
+                  //   category.icon
+                  // }
                   onClick={() => setNewSpendCategory(category.value)}
                 />
                 : null
