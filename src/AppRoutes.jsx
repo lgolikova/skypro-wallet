@@ -20,7 +20,6 @@ function AppRoutes() {
     const [isSpendSelected, setIsSpendSelected] = useState("");
 
     const handleSendClick = (sendId) => {
-        // console.log(`кликнули по строчке с id=${sendId}`);
         setIsSpendSelected(sendId);
     };
 
