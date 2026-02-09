@@ -1,5 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
 import SContainer from "../Container.styled";
 import {
     SHeader,
@@ -11,6 +13,14 @@ import {
 } from "./Header.styled";
 
 const Header = () => {
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+    };
+
     return (
         <SHeader>
             <SContainer>
@@ -28,7 +38,7 @@ const Header = () => {
                             Анализ расходов
                         </SHeaderNavBtn>
                     </SHeaderNav>
-                    <SLogoutBtn>Выйти</SLogoutBtn>
+                    <SLogoutBtn onClick={handleLogout}>Выйти</SLogoutBtn>
                 </SHeaderBlock>
             </SContainer>
         </SHeader>

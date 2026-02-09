@@ -13,8 +13,8 @@ const SButton = styled.button`
     cursor: pointer;
     transition: background-color 0.3s ease;
 
-    ${({ active }) =>
-        active
+    ${({ $active }) =>
+        $active
             ? css`
                   background-color: #1fa46c;
                   cursor: pointer;
@@ -33,7 +33,7 @@ export const BaseButton = ({ text, active = true, onClick }) => {
     return (
         <SButton
             type="submit"
-            active={active}
+            $active={active}
             onClick={onClick}
             disabled={!active}
         >
