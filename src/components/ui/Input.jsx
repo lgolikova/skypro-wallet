@@ -7,6 +7,10 @@ const InputWrapper = styled.div`
     gap: 4px;
     width: 100%;
     max-width: 313px;
+
+    @media (max-width: 768px) {
+        max-width: 100%;
+    }
 `;
 
 const LabelWrapper = styled.label`
@@ -45,6 +49,10 @@ const SInput = styled.input`
             border-color: #1fa46c;
             background-color: #dbffe9;
         `}
+
+    @media (max-width: 768px) {
+        max-width: 100%;
+    }
 `;
 
 const Star = styled.span`

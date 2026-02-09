@@ -4,9 +4,6 @@ import { BaseInput } from "./ui/Input";
 import { BaseButton } from "./ui/Button";
 import { signIn, signUp } from "../services/auth";
 import { AuthContext } from "../context/AuthContext";
-// import SContainer from "./Container.styled";
-// import SGlobalWrapper from "./GlobalWrapper.styled";
-// import Header from "./Header/Header";
 
 const FormWrapper = styled.form`
     display: flex;
@@ -18,6 +15,10 @@ const FormWrapper = styled.form`
     background-color: #fff;
     padding: 32px;
     border-radius: 16px;
+
+    @media (max-width: 768px) {
+        padding: 0 16px;
+    }
 `;
 
 const ErrorMessage = styled.div`
