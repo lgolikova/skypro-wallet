@@ -20,7 +20,9 @@ export const SpendsProvider = ({ children }) => {
   const [newSpendCategory, setNewSpendCategory] = useState("");
   const [newSpendDate, setNewSpendDate] = useState("");
   const [newSpendSum, setNewSpendSum] = useState("");
-  const [isCategorySelected, setIsCategorySelected] = useState("");
+  // const [isCategorySelected, setIsCategorySelected] = useState("");
+  // console.log("isCategorySelected: ", isCategorySelected);
+  // const [isCategorySelectedInDropdownList, setIsCategorySelectedInDropdownList] = useState("");
 
   const navigate = useNavigate();
 
@@ -31,14 +33,15 @@ export const SpendsProvider = ({ children }) => {
     navigate(`/spend/${spendId}`);
   };
 
-  const handleCategoryClick = (categoryName) => {
-    console.log(`кликнули по категории ${categoryName}`);
-    setIsCategorySelected(categoryName);
+  // const handleCategoryClick = (categoryName) => {
+  //   console.log(`кликнули по категории ${categoryName}`);
+  //   setIsCategorySelected(categoryName);
+  // };
 
-    // установить активную иконку
-
-    // цвет текста - зелёный
-  };
+  // const handleCategoryInDropdownListClick = (categoryName) => {
+  //   console.log(`кликнули по категории ${categoryName}`);
+  //   setIsCategorySelectedInDropdownList(categoryName);
+  // };
 
   const addSpend = ({
     description,
@@ -86,8 +89,10 @@ export const SpendsProvider = ({ children }) => {
         newSpendCategory, setNewSpendCategory,
         newSpendDate, setNewSpendDate,
         newSpendSum, setNewSpendSum,
-        isCategorySelected, setIsCategorySelected,
-        handleCategoryClick,
+        // isCategorySelected, setIsCategorySelected,
+        // handleCategoryClick,
+        // handleCategoryInDropdownListClick,
+        // isCategorySelectedInDropdownList, setIsCategorySelectedInDropdownList,
       }}>
       {children}
     </SpendsContext.Provider>

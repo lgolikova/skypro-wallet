@@ -4,7 +4,7 @@ import { Category } from "../category/Category";
 import { SFormWrapper, SFormTitle, SBlockWrapper, SBlockTitle, SCategoriesWrapper } from "./SpendForm.styled";
 import { categories } from "../../utils/categories";
 import { parse, format } from "date-fns";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { SpendsContext } from "../../context/SpendsContext";
 import { useParams } from "react-router-dom";
 
@@ -18,8 +18,15 @@ export const SpendForm = () => {
     newSpendCategory, setNewSpendCategory,
     newSpendDate, setNewSpendDate,
     newSpendSum, setNewSpendSum,
-    isCategorySelected,
+    // isCategorySelected,
   } = useContext(SpendsContext);
+
+  const [isCategorySelected, setIsCategorySelected] = useState("");
+
+  const handleCategoryClick = (categoryName) => {
+    // console.log(`кликнули по категории ${categoryName}`);
+    setIsCategorySelected(categoryName);
+  };
 
 
   const { id } = useParams();
@@ -99,7 +106,13 @@ export const SpendForm = () => {
                   //   :
                   //   category.icon
                   // }
-                  onClick={() => setNewSpendCategory(category.value)}
+
+                  onClick={() => {
+                    setNewSpendCategory(category.value);
+                    // handleCategoryClick(category.value);
+                  }}
+                  isCategorySelected={isCategorySelected}
+                  handleCategoryClick={handleCategoryClick}
                 />
                 : null
             )}
