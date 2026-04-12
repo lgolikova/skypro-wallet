@@ -4,21 +4,24 @@ import { Category } from "../category/Category";
 import { SFormWrapper, SFormTitle, SBlockWrapper, SBlockTitle, SCategoriesWrapper } from "./SpendForm.styled";
 import { categories } from "../../utils/categories";
 import { parse, format } from "date-fns";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SpendsContext } from "../../context/SpendsContext";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 
 export const SpendForm = () => {
+  const navigate = useNavigate();
+
   const {
     spends,
-    isSpendSelected,
+    isSpendSelected, setIsSpendSelected,
     addSpend,
     newSpendDescription, setNewSpendDescription,
     newSpendCategory, setNewSpendCategory,
     newSpendDate, setNewSpendDate,
     newSpendSum, setNewSpendSum,
     // isCategorySelected,
+    editSpend
   } = useContext(SpendsContext);
 
   const [isCategorySelected, setIsCategorySelected] = useState("");
@@ -31,9 +34,27 @@ export const SpendForm = () => {
 
   const { id } = useParams();
   const selectedSpend = spends.find((spend) => spend._id === id);
+  // console.log("selectedSpend: ", selectedSpend);
 
 
-  const onSubmit = (event) => {
+  useEffect(() => {
+    if (id && selectedSpend) {
+      setNewSpendDescription(selectedSpend.description);
+      setNewSpendCategory(selectedSpend.category);
+      setIsCategorySelected(selectedSpend.category);
+      setNewSpendSum(selectedSpend.sum.toString());
+      setNewSpendDate(format(new Date(selectedSpend.date), "dd.MM.yyyy"));
+    } else {
+      setNewSpendDescription("");
+      setNewSpendCategory("");
+      setIsCategorySelected("");
+      setNewSpendSum("");
+      setNewSpendDate("");
+    }
+  }, [id, selectedSpend]);
+
+
+  const onSubmit = async (event) => {
     event.preventDefault();
 
     // отформатировать дату для записи LS
@@ -42,18 +63,53 @@ export const SpendForm = () => {
     const fullYear = year.length === 2 ? `20${year}` : year;
 
     const parsedDate = parse(`${day}.${month}.${fullYear}`, 'dd.MM.yyyy', new Date());
-    const formattedDate = format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+    // const formattedDate = format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+    const formattedDate = format(parsedDate, "M-d-yyyy");
 
     // отформатировать сумму для записи LS
-    const formattedSum = Number(parseFloat(newSpendSum.replace(/\s/g, '').replace(',', '.')).toLocaleString('ru-RU'));
+    // const formattedSum = parseFloat(newSpendSum.replace(/\s/g, '').replace(',', '.')).toLocaleString('ru-RU');
+    // console.log("formattedSum: ", formattedSum);
+    // console.log("formattedSum: ", typeof(formattedSum));
+    const formattedSum = Number(newSpendSum.replace(/\s/g, '').replace(',', '.'));
 
-    addSpend({
-      description: newSpendDescription,
-      category: newSpendCategory,
-      date: formattedDate,
-      sum: formattedSum,
-    });
-  }
+
+    if (id) {
+      await editSpend(id, {
+        description: newSpendDescription,
+        category: newSpendCategory,
+        date: formattedDate,
+        sum: formattedSum,
+      });
+
+      setNewSpendDescription("");
+      setNewSpendCategory("");
+      setIsCategorySelected("");
+      setNewSpendSum("");
+      setNewSpendDate("");
+
+      setIsSpendSelected("");
+      navigate("/");
+    } else {
+      try {
+        await addSpend({
+          description: newSpendDescription,
+          category: newSpendCategory,
+          date: formattedDate,
+          sum: formattedSum,
+        });
+
+        setNewSpendDescription("");
+        setNewSpendCategory("");
+        setIsCategorySelected("");
+        setNewSpendSum("");
+        setNewSpendDate("");
+
+        navigate("/");
+      } catch (err) {
+        console.error("Ошибка при сохранении расхода: ", err);
+      }
+    }
+  };
 
 
   return (
