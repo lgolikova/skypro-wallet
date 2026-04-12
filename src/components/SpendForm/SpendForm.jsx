@@ -25,6 +25,14 @@ export const SpendForm = () => {
   } = useContext(SpendsContext);
 
   const [isCategorySelected, setIsCategorySelected] = useState("");
+  const initialErrorsState = {
+    description: false,
+    category: false,
+    date: false,
+    sum: false,
+  }
+
+  const [errors, setErrors] = useState(initialErrorsState);
 
   const handleCategoryClick = (categoryName) => {
     // console.log(`кликнули по категории ${categoryName}`);
@@ -56,6 +64,37 @@ export const SpendForm = () => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
+
+    // проверка даты
+    const dateRegex = /^\d{2}\.\d{2}\.\d{2,4}$/;
+    const isDateFormallyValid = dateRegex.test(newSpendDate);
+
+    let isActualDate = false;
+    if (isDateFormallyValid) {
+      const [day, month, year] = newSpendDate.split(".");
+      const fullYear = year.length === 2 ? `20${year}` : year;
+      const parsedDate = parse(`${day}.${month}.${fullYear}`, 'dd.MM.yyyy', new Date());
+      isActualDate = !isNaN(parsedDate.getTime());
+    }
+
+
+    const newErrors = {
+      description: !newSpendDescription.trim() || newSpendDescription.trim().length < 4,
+      category: !isCategorySelected,
+      // date: !newSpendDate.trim(),
+      date: !isDateFormallyValid || !isActualDate,
+      sum: !newSpendSum.toString().trim() || isNaN(Number(newSpendSum.toString().replace(/\s/g, '').replace(',', '.'))) || Number(newSpendSum.toString().replace(/\s/g, '').replace(',', '.')) < 0,
+    };
+
+
+    setErrors(newErrors);
+    console.log("Результат проверки перед отправкой:", newErrors);
+
+    if (Object.values(newErrors).some((error) => error)) {
+      console.log("данные невалидные: ", newErrors);
+      return;
+    }
+
 
     // отформатировать дату для записи LS
     const [day, month, year] = newSpendDate.split(".");
@@ -118,38 +157,26 @@ export const SpendForm = () => {
         <SFormTitle>{!isSpendSelected ? "Новый расход" : "Редактирование"}</SFormTitle>
 
         <SBlockWrapper>
-          <SBlockTitle>Описание</SBlockTitle>
-          {/* {!isSpendSelected ? */}
+          <SBlockTitle>
+            Описание {errors.description && <span style={{ color: "red", fontWeight: "400", }}>*</span>}
+          </SBlockTitle>
           <BaseInput
-            // label
+            // label="Описание"
             value={newSpendDescription}
-            // onInput={(event) => setNewSpendDescription(event.target.value)}
-            onChange={(event) => setNewSpendDescription(event.target.value)}
-            // onChange
-            // error
-            // valid
-            // mode
+            onChange={(event) => {
+              setNewSpendDescription(event.target.value);
+              setErrors(prev => ({ ...prev, description: false }));
+            }}
+            error={errors.description}
+            valid={!errors.description && newSpendDescription}
             placeholder="Введите описание"
-          // type
           />
-          {/* : */}
-          {/* <BaseInput
-              // label
-              value={selectedSpend.description}
-              onInput={(event) => setNewSpendDescription(event.target.value)}
-              // onChange
-              // error
-              // valid
-              // mode
-              placeholder="Введите описание"
-            // type
-            /> */}
-          {/* } */}
         </SBlockWrapper>
 
         <SBlockWrapper style={{ height: "141px" }}>
-          <SBlockTitle>Категория</SBlockTitle>
-          {/* {!isSpendSelected ? */}
+          <SBlockTitle>
+            Категория {errors.category && <span style={{ color: "red", fontWeight: "400", }}>*</span>}
+          </SBlockTitle>
           <SCategoriesWrapper>
             {categories.map(
               (category) => category.icon ?
@@ -177,76 +204,40 @@ export const SpendForm = () => {
                 : null
             )}
           </SCategoriesWrapper>
-          {/* :
-            <SCategoriesWrapper>
-              <Category
-                key={selectedSpend.value}
-                name={selectedSpend.label}
-                icon={selectedSpend.icon}
-                newSpendCategory={newSpendCategory}
-                onClick={() => setNewSpendCategory(selectedSpend.value)} />
-            </SCategoriesWrapper>
-          } */}
         </SBlockWrapper>
 
         <SBlockWrapper>
-          <SBlockTitle>Дата</SBlockTitle>
-          {/* {!isSpendSelected ? */}
+          <SBlockTitle>
+            Дата {errors.date && <span style={{ color: "red", fontWeight: "400", }}>*</span>}
+          </SBlockTitle>
           <BaseInput
-            // label
+            // label="Дата"
             value={newSpendDate}
-            // onInput={(event) => setNewSpendDate(event.target.value)}
-            onChange={(event) => setNewSpendDate(event.target.value)}
-            // onChange
-            // error
-            // valid
-            // mode
+            onChange={(event) => {
+              setNewSpendDate(event.target.value);
+              setErrors(prev => ({ ...prev, date: false }));
+            }}
+            error={errors.date}
+            valid={!errors.date && newSpendDate}
             placeholder="Введите дату"
-          // type
           />
-          {/* : */}
-          {/* <BaseInput
-              // label
-              value={format(selectedSpend.date, "dd.MM.yyyy")}
-              onInput={(event) => setNewSpendDate(event.target.value)}
-              // onChange
-              // error
-              // valid
-              // mode
-              placeholder="Введите дату"
-            // type
-            /> */}
-          {/* } */}
         </SBlockWrapper>
 
         <SBlockWrapper>
-          <SBlockTitle>Сумма</SBlockTitle>
-          {/* {!isSpendSelected ? */}
+          <SBlockTitle>
+            Сумма {errors.sum && <span style={{ color: "red", fontWeight: "400", }}>*</span>}
+          </SBlockTitle>
           <BaseInput
-            // label
+            // label="Сумма"
             value={newSpendSum}
-            // onInput={(event) => setNewSpendSum(event.target.value)}
-            onChange={(event) => setNewSpendSum(event.target.value)}
-            // onChange
-            // error
-            // valid
-            // mode
+            onChange={(event) => {
+              setNewSpendSum(event.target.value);
+              setErrors(prev => ({ ...prev, sum: false }));
+            }}
+            error={errors.sum}
+            valid={!errors.sum && newSpendSum}
             placeholder="Введите сумму"
-          // type
           />
-          {/* : */}
-          {/* <BaseInput
-              // label
-              value={selectedSpend.sum.replace(/\s/g, '')}
-              onInput={(event) => setNewSpendSum(event.target.value)}
-              // onChange
-              // error
-              // valid
-              // mode
-              placeholder="Введите сумму"
-            // type
-            /> */}
-          {/* } */}
         </SBlockWrapper>
 
         <BaseButton
