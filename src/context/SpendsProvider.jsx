@@ -18,18 +18,23 @@ export const SpendsProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
+  const [filterCategories, setFilterCategories] = useState([]);
+  const [sortType, setSortType] = useState("date");
+
+
   useEffect(() => {
     if (token) {
       getSpends();
     }
-  }, [token]);
+  }, [token, sortType, filterCategories]);
 
 
   const getSpends = async () => {
     if (!token) return;
 
     try {
-      const data = await fetchSpends(token);
+      // const data = await fetchSpends(token);
+      const data = await fetchSpends(token, sortType, filterCategories);
       setSpends(data);
     } catch (err) {
       console.error("Ошибка при получении расходов: ", err);
@@ -74,7 +79,7 @@ export const SpendsProvider = ({ children }) => {
     }
   };
 
-  const editSpend = async (spendId, {description, category, date, sum}) => {
+  const editSpend = async (spendId, { description, category, date, sum }) => {
     try {
       const newData = { description, category, date, sum };
 
@@ -103,7 +108,11 @@ export const SpendsProvider = ({ children }) => {
         newSpendCategory, setNewSpendCategory,
         newSpendDate, setNewSpendDate,
         newSpendSum, setNewSpendSum,
-        editSpend
+        editSpend,
+        filterCategories,
+        setFilterCategories,
+        sortType,
+        setSortType,
       }}>
       {children}
     </SpendsContext.Provider>

@@ -8,7 +8,7 @@ export const DropdownListFilter = ({ onCategorySelectInDropdownList }) => {
   const [isCategorySelectedInDropdownList, setIsCategorySelectedInDropdownList] = useState("");
 
   const handleCategoryInDropdownListClick = (categoryName) => {
-    console.log(`в выпадающем списке кликнули по категории ${categoryName}`);
+    // console.log(`в выпадающем списке кликнули по категории ${categoryName}`);
     setIsCategorySelectedInDropdownList(categoryName);
 
     onCategorySelectInDropdownList(categoryName);
@@ -44,14 +44,14 @@ export const DropdownListSort = ({ onClick }) => {
       <SContent
         onClick={(e) => {
           e.stopPropagation();
-          onClick();
+          onClick("date");
         }} >
         <STitle>Дате</STitle>
       </SContent>
       <SContent
         onClick={(e) => {
           e.stopPropagation();
-          onClick();
+          onClick("sum");
         }} >
         <STitle>Сумме</STitle>
       </SContent>

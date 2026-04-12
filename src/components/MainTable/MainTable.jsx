@@ -4,6 +4,7 @@ import { MainTableRow } from "../MainTableRow/MainTableRow";
 import actionIcon from "../../assets/icons/actions.svg";
 import { DropdownListFilter, DropdownListSort } from "../DropdownList/DropdownList";
 import { SpendsContext } from "../../context/SpendsContext";
+import { categories } from "../../utils/categories";
 
 
 export const MainTable = () => {
@@ -11,6 +12,10 @@ export const MainTable = () => {
     spends,
     isSpendSelected,
     setNewSpendCategory,
+    filterCategories,
+    setFilterCategories,
+    sortType,
+    setSortType,
   } = useContext(SpendsContext);
 
 
@@ -24,15 +29,24 @@ export const MainTable = () => {
 
   const handleCloseFilter = (categoryName) => {
     setIsFilterActive(false);
-    setNewSpendCategory(categoryName);
+    // setNewSpendCategory(categoryName);
+
+    setFilterCategories(prev => {
+      if (categoryName === "") return [];
+      if (prev.includes(categoryName)) {
+        return prev.filter(category => category !== categoryName);
+      }
+      return [...prev, categoryName]
+    });
   };
 
   const handleClickSort = () => {
     setIsSortActive(true);
   };
 
-  const handleCloseSort = () => {
+  const handleCloseSort = (type) => {
     setIsSortActive(false);
+    setSortType(type);
   };
 
 
@@ -68,6 +82,14 @@ export const MainTable = () => {
   }, []);
 
 
+  const categoryLabelsMap = categories.reduce((acc, cat) => {
+    acc[cat.value] = cat.label;
+    return acc;
+  }, {});
+
+  const selectedLabels = filterCategories.map(value => categoryLabelsMap[value]).filter(Boolean);
+
+
   return (
     <STableWrapper>
       <STableHeaderWrapper>
@@ -83,7 +105,10 @@ export const MainTable = () => {
                   />
                 </SDropdownListWrapper>
               }
-              <SFilterTitle >Фильтровать по категории <SFlag>еда</SFlag></SFilterTitle>
+              <SFilterTitle >Фильтровать по категории <SFlag>
+                {selectedLabels.length > 0 ? selectedLabels.join(", ") : "все"}
+              </SFlag>
+              </SFilterTitle>
               <SActionIcon src={actionIcon} alt="фильтр" $isActive={isFilterActive} />
             </SActionWrapper>
 
@@ -91,7 +116,7 @@ export const MainTable = () => {
               {isSortActive &&
                 <SDropdownListWrapper ref={popRef}><DropdownListSort onClick={handleCloseSort} /></SDropdownListWrapper>
               }
-              <SSortTitle>Сортировать по <SFlag>дате</SFlag></SSortTitle>
+              <SSortTitle>Сортировать по <SFlag>{sortType === "date" ? "дате" : "сумме"}</SFlag></SSortTitle>
               <SActionIcon src={actionIcon} alt="сортировка" $isActive={isSortActive} />
             </SActionWrapper>
 

@@ -18,7 +18,7 @@ export const STableHeaderWrapper = styled.div`
   justify-content: center;
   align-items: center;
   border-bottom: 0.5px solid #999999;
-  height: 114px;
+  /* height: 114px; */
   gap: 32px;
 `;
 
@@ -61,6 +61,7 @@ export const SFilterTitle = styled.div`
   line-height: 150%;
   text-align: center;
   vertical-align: middle;
+  max-width: 250px;
 `;
 
 export const SFlag = styled.span`
