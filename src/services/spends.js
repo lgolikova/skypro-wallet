@@ -36,3 +36,19 @@ export async function postSpend(token, newSpend) {
   }
 };
 
+export async function deleteSpend(token, spendId) {
+  try {
+    const resp = await axios.delete(`${API_URL}/${spendId}`, {
+      headers: {
+        "Content-type": "",
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    // console.log("resp.data в апи функции deleteSpend: ", resp.data);
+    return resp.data;
+  } catch (error) {
+    console.error("Ошибка при добавлении расхода: ", error);
+    throw error;
+  }
+};
+
