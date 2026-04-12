@@ -26,23 +26,9 @@ function AppRoutes() {
     return (
         <Routes>
             <Route element={<PrivateRoute />}>
-                <Route
-                    path="/"
-                    element={
-                        <MainPage
-                            transactions={transactions}
-                            isSpendSelected={isSpendSelected}
-                            onclick={handleSendClick}
-                        />
-                    }
-                >
+                <Route path="/" element={<MainPage transactions={transactions} isSpendSelected={isSpendSelected} onclick={handleSendClick} />}>
                     <Route path="spend/new" element={<NewSpendPage />} />
-                    <Route
-                        path="spend/:id"
-                        element={
-                            <EditSpendPage isSpendSelected={isSpendSelected} />
-                        }
-                    />
+                    <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected} />} />
                 </Route>
                 <Route path="/spend-analysis" element={<SpendAnalysisPage />} />
             </Route>
