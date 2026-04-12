@@ -10,7 +10,6 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
 import SContainer from "../components/Container.styled";
 import SGlobalWrapper from "../components/GlobalWrapper.styled";
@@ -26,7 +25,74 @@ ChartJS.register(
   Legend
 );
 
-// Стилизованные компоненты
+// Сервис для работы с API транзакций
+const API_BASE_URL = "https://wedev-api.sky.pro/api";
+
+// ВАШ ТОКЕН (вставлен из ответа API)
+const TEMP_TOKEN =
+  "cwb8cscwd0csb8co74b8dcasc4cgc0b854b0ccc46gcwb8cscw5g5k5o5s5w6g39k3bo3d03d43co3bc3e43c43k3983co3cc3e83bw3co3bc3b43d43bo3cc3e8";
+
+// Получить транзакции за период
+const getTransactionsByPeriod = async (startDate, endDate) => {
+  try {
+    // Формат даты для API: M-D-YYYY (как в документации: "6-1-2025")
+    const formatDateForAPI = (date) => {
+      const month = String(date.getMonth() + 1); // Без ведущих нулей
+      const day = String(date.getDate()); // Без ведущих нулей
+      const year = date.getFullYear();
+      return `${month}-${day}-${year}`;
+    };
+
+    const requestData = {
+      start: formatDateForAPI(startDate),
+      end: formatDateForAPI(endDate),
+    };
+
+    console.log("📅 Запрос транзакций за период:", requestData);
+    console.log("🔑 Используем токен:", TEMP_TOKEN.substring(0, 20) + "...");
+
+    const response = await fetch(`${API_BASE_URL}/transactions/period`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${TEMP_TOKEN}`,
+        // ВАЖНО: для этого API НЕ добавляем Content-Type!
+      },
+      body: JSON.stringify(requestData),
+    });
+
+    console.log("📊 Статус ответа API:", response.status, response.statusText);
+
+    if (response.status === 401) {
+      console.error("❌ Ошибка 401: Токен невалиден или просрочен");
+      return getMockTransactions(startDate, endDate);
+    }
+
+    if (!response.ok) {
+      console.warn(
+        `❌ API вернул ошибку ${response.status}, используем моковые данные`
+      );
+      return getMockTransactions(startDate, endDate);
+    }
+
+    const data = await response.json();
+    console.log("✅ Получены транзакции от API:", data.length || 0, "записей");
+    return data || [];
+  } catch (error) {
+    console.warn("❌ Ошибка сети, используем моковые данные:", error);
+    return getMockTransactions(startDate, endDate);
+  }
+};
+
+// Маппинг категорий API на русские названия
+const categoryMapping = {
+  food: "Еда",
+  transport: "Транспорт",
+  housing: "Жилье",
+  joy: "Развлечения",
+  education: "Образование",
+  others: "Другое",
+};
+
 const SPageContainer = styled.div`
   padding: 32px 0;
 
@@ -180,16 +246,20 @@ const SCalendarDay = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 60px;
-  background: ${(props) => (props.selected ? "#DBFFE9" : "#F4F5F6")};
-  color: ${(props) => (props.selected ? "#1fa46c" : "#000000")};
+  background: ${(props) =>
+    props["data-selected"] === "true" ? "#DBFFE9" : "#F4F5F6"};
+  color: ${(props) =>
+    props["data-selected"] === "true" ? "#1fa46c" : "#000000"};
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: ${(props) => (props.selected ? "600" : "normal")};
+  font-weight: ${(props) =>
+    props["data-selected"] === "true" ? "600" : "normal"};
   position: relative;
 
   &:hover {
-    background: ${(props) => (props.selected ? "#DBFFE9" : "#e0e0e0")};
+    background: ${(props) =>
+      props["data-selected"] === "true" ? "#DBFFE9" : "#e0e0e0"};
   }
 `;
 
@@ -240,17 +310,21 @@ const SMonthButton = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 30px;
-  background: ${(props) => (props.selected ? "#DBFFE9" : "#F4F5F6")};
-  color: ${(props) => (props.selected ? "#1fa46c" : "#000000")};
+  background: ${(props) =>
+    props["data-selected"] === "true" ? "#DBFFE9" : "#F4F5F6"};
+  color: ${(props) =>
+    props["data-selected"] === "true" ? "#1fa46c" : "#000000"};
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: ${(props) => (props.selected ? "600" : "normal")};
+  font-weight: ${(props) =>
+    props["data-selected"] === "true" ? "600" : "normal"};
   padding: 6px 0;
   gap: 6px;
 
   &:hover {
-    background: ${(props) => (props.selected ? "#DBFFE9" : "#e0e0e0")};
+    background: ${(props) =>
+      props["data-selected"] === "true" ? "#DBFFE9" : "#e0e0e0"};
   }
 `;
 
@@ -342,21 +416,13 @@ const SHeaderRow = styled.div`
   margin-bottom: 16px;
 `;
 
-const SPeriodSelector = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
 const SPeriodSwitcher = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
 `;
 
-const SPeriodButton = styled.button.attrs((props) => ({
-  "data-active": props.$active ? "true" : "false",
-}))`
+const SPeriodButton = styled.button`
   background: transparent;
   border: none;
   cursor: pointer;
@@ -366,23 +432,11 @@ const SPeriodButton = styled.button.attrs((props) => ({
   line-height: 150%;
   text-align: center;
   vertical-align: middle;
+  font-weight: ${(props) => (props["data-active"] === "true" ? "600" : "400")};
+  color: ${(props) => (props["data-active"] === "true" ? "#1fa46c" : "#000")};
+  text-decoration: ${(props) =>
+    props["data-active"] === "true" ? "underline" : "none"};
 
-  ${(props) =>
-    !props.$active &&
-    `
-    font-weight: 400;
-    color: #000;
-    text-decoration: none;
-  `}
-
-  ${(props) =>
-    props.$active &&
-    `
-    font-weight: 600;
-    color: #1fa46c;
-    text-decoration: underline;
-  `}
-  
   &:hover {
     font-weight: 600;
     color: #1fa46c;
@@ -392,18 +446,96 @@ const SPeriodButton = styled.button.attrs((props) => ({
   transition: all 0.3s ease;
 `;
 
+const SLoadingText = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 16px;
+`;
+
+const SErrorText = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #ff4444;
+  font-size: 16px;
+`;
+
+const SRetryButton = styled.button`
+  background: #1fa46c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 10px;
+
+  &:hover {
+    background: #188c5c;
+  }
+`;
+
+// Моковые данные для демонстрации
+const getMockTransactions = (startDate, endDate) => {
+  const categories = [
+    "food",
+    "transport",
+    "housing",
+    "joy",
+    "education",
+    "others",
+  ];
+  const baseSums = {
+    food: 12500,
+    transport: 8500,
+    housing: 22000,
+    joy: 6400,
+    education: 3200,
+    others: 4800,
+  };
+
+  const transactions = [];
+
+  // Генерируем реалистичные данные
+  const daysDiff =
+    Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) || 30;
+
+  categories.forEach((category) => {
+    const numTransactions = 3 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < numTransactions; i++) {
+      const randomDay = new Date(
+        startDate.getTime() +
+          Math.floor(Math.random() * daysDiff) * 24 * 60 * 60 * 1000
+      );
+
+      transactions.push({
+        _id: `mock_${Date.now()}_${category}_${i}`,
+        userId: "mock_user_id",
+        description: `${categoryMapping[category]} ${i + 1}`,
+        category: category,
+        date: randomDay.toISOString(),
+        sum: Math.floor(
+          (baseSums[category] / numTransactions) * (0.7 + Math.random() * 0.6)
+        ),
+      });
+    }
+  });
+
+  console.log("📊 Созданы моковые транзакции:", transactions.length);
+  return transactions;
+};
+
 // Компонент переключения периода для десктопа
 const DesktopPeriodSwitcher = ({ activePeriod, onPeriodChange }) => {
   return (
     <SPeriodSwitcher>
       <SPeriodButton
-        $active={activePeriod === "month"}
+        data-active={activePeriod === "month" ? "true" : "false"}
         onClick={() => onPeriodChange("month")}
       >
         Месяц
       </SPeriodButton>
       <SPeriodButton
-        $active={activePeriod === "year"}
+        data-active={activePeriod === "year" ? "true" : "false"}
         onClick={() => onPeriodChange("year")}
       >
         Год
@@ -417,13 +549,13 @@ const MobilePeriodSwitcher = ({ activePeriod, onPeriodChange }) => {
   return (
     <SPeriodSwitcher style={{ marginBottom: "16px", padding: "0 16px" }}>
       <SPeriodButton
-        $active={activePeriod === "month"}
+        data-active={activePeriod === "month" ? "true" : "false"}
         onClick={() => onPeriodChange("month")}
       >
         Месяц
       </SPeriodButton>
       <SPeriodButton
-        $active={activePeriod === "year"}
+        data-active={activePeriod === "year" ? "true" : "false"}
         onClick={() => onPeriodChange("year")}
       >
         Год
@@ -450,10 +582,23 @@ const YearCalendar = ({ selectedDates, onDateSelect }) => {
     "Декабрь",
   ];
 
-  const isMonthSelected = (year, monthIndex) => {
-    return selectedDates.some(
-      (date) => date.getFullYear() === year && date.getMonth() === monthIndex
-    );
+  const isMonthSelected = (year, monthIndex, selectedDates) => {
+    if (!selectedDates || selectedDates.length === 0) return false;
+
+    if (selectedDates.length === 2) {
+      const [start, end] = selectedDates.sort((a, b) => a - b);
+      const currentMonthStart = new Date(year, monthIndex, 1);
+      const currentMonthEnd = new Date(year, monthIndex + 1, 0);
+
+      return currentMonthStart >= start && currentMonthEnd <= end;
+    }
+
+    if (selectedDates.length === 1) {
+      const date = selectedDates[0];
+      return date.getFullYear() === year && date.getMonth() === monthIndex;
+    }
+
+    return false;
   };
 
   const handleMonthClick = (year, monthIndex) => {
@@ -468,11 +613,11 @@ const YearCalendar = ({ selectedDates, onDateSelect }) => {
           <SYearTitle>{year}</SYearTitle>
           <SMonthsGrid>
             {months.map((month, index) => {
-              const isSelected = isMonthSelected(year, index);
+              const isSelected = isMonthSelected(year, index, selectedDates);
               return (
                 <SMonthButton
                   key={`${year}-${index}`}
-                  selected={isSelected}
+                  data-selected={isSelected ? "true" : "false"}
                   onClick={() => handleMonthClick(year, index)}
                 >
                   {month}
@@ -508,13 +653,24 @@ const MonthCalendar = ({ selectedDates, onDateSelect }) => {
     return day === 0 ? 6 : day - 1;
   };
 
-  const isDateSelected = (date) => {
-    return selectedDates.some(
-      (selected) =>
-        selected.getDate() === date.getDate() &&
-        selected.getMonth() === date.getMonth() &&
-        selected.getFullYear() === date.getFullYear()
-    );
+  const isDateSelected = (date, selectedDates) => {
+    if (!selectedDates || selectedDates.length === 0) return false;
+
+    if (selectedDates.length === 2) {
+      const [start, end] = selectedDates.sort((a, b) => a - b);
+      return date >= start && date <= end;
+    }
+
+    if (selectedDates.length === 1) {
+      const selectedDate = selectedDates[0];
+      return (
+        selectedDate.getDate() === date.getDate() &&
+        selectedDate.getMonth() === date.getMonth() &&
+        selectedDate.getFullYear() === date.getFullYear()
+      );
+    }
+
+    return false;
   };
 
   const handleDateClick = (date) => {
@@ -533,12 +689,12 @@ const MonthCalendar = ({ selectedDates, onDateSelect }) => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      const isSelected = isDateSelected(date);
+      const isSelected = isDateSelected(date, selectedDates);
 
       days.push(
         <SCalendarDay
           key={day}
-          selected={isSelected}
+          data-selected={isSelected ? "true" : "false"}
           onClick={() => handleDateClick(date)}
         >
           {day}
@@ -628,157 +784,15 @@ const DesktopCalendar = ({ selectedDates, onDateSelect }) => {
 // Основной компонент страницы анализа
 const SpendAnalysisPage = () => {
   const [selectedDates, setSelectedDates] = useState([]);
+  const [selectionStart, setSelectionStart] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const chartRef = useRef(null);
 
-  // ГЕНЕРИРУЕМ данные для ВСЕХ дней всех месяцев
-  const generateExpensesData = () => {
-    const data = {};
-    const months = [
-      { year: 2024, month: 0, name: "Январь" },
-      { year: 2024, month: 1, name: "Февраль" },
-      { year: 2024, month: 2, name: "Март" },
-      { year: 2024, month: 3, name: "Апрель" },
-      { year: 2024, month: 4, name: "Май" },
-      { year: 2024, month: 5, name: "Июнь" },
-      { year: 2024, month: 6, name: "Июль" },
-      { year: 2024, month: 7, name: "Август" },
-      { year: 2024, month: 8, name: "Сентябрь" },
-      { year: 2024, month: 9, name: "Октябрь" },
-      { year: 2024, month: 10, name: "Ноябрь" },
-      { year: 2024, month: 11, name: "Декабрь" },
-      { year: 2025, month: 0, name: "Январь" },
-      { year: 2025, month: 1, name: "Февраль" },
-    ];
-
-    // Базовые расходы по категориям для разных месяцев
-    const baseExpenses = {
-      0: {
-        food: 15000,
-        transport: 10000,
-        housing: 15000,
-        entertainment: 8000,
-        education: 5000,
-        other: 4000,
-      }, // Январь
-      1: {
-        food: 14000,
-        transport: 9500,
-        housing: 15000,
-        entertainment: 7500,
-        education: 4500,
-        other: 3500,
-      }, // Февраль
-      2: {
-        food: 16000,
-        transport: 11000,
-        housing: 15000,
-        entertainment: 9000,
-        education: 5500,
-        other: 4500,
-      }, // Март
-      3: {
-        food: 17000,
-        transport: 12000,
-        housing: 15000,
-        entertainment: 10000,
-        education: 6000,
-        other: 5000,
-      }, // Апрель
-      4: {
-        food: 18000,
-        transport: 13000,
-        housing: 15000,
-        entertainment: 11000,
-        education: 6500,
-        other: 5500,
-      }, // Май
-      5: {
-        food: 19000,
-        transport: 14000,
-        housing: 15000,
-        entertainment: 12000,
-        education: 7000,
-        other: 6000,
-      }, // Июнь
-      6: {
-        food: 20000,
-        transport: 15000,
-        housing: 15000,
-        entertainment: 13000,
-        education: 7500,
-        other: 6500,
-      }, // Июль
-      7: {
-        food: 21000,
-        transport: 16000,
-        housing: 15000,
-        entertainment: 14000,
-        education: 8000,
-        other: 7000,
-      }, // Август
-      8: {
-        food: 19000,
-        transport: 14000,
-        housing: 15000,
-        entertainment: 12000,
-        education: 7000,
-        other: 6000,
-      }, // Сентябрь
-      9: {
-        food: 18000,
-        transport: 13000,
-        housing: 15000,
-        entertainment: 11000,
-        education: 6500,
-        other: 5500,
-      }, // Октябрь
-      10: {
-        food: 17000,
-        transport: 12000,
-        housing: 15000,
-        entertainment: 10000,
-        education: 6000,
-        other: 5000,
-      }, // Ноябрь
-      11: {
-        food: 22000,
-        transport: 17000,
-        housing: 15000,
-        entertainment: 15000,
-        education: 9000,
-        other: 8000,
-      }, // Декабрь
-    };
-
-    months.forEach(({ year, month }) => {
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const base = baseExpenses[month] || baseExpenses[6]; // fallback к июлю
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day);
-        const dateKey = date.toISOString().split("T")[0];
-
-        // Добавляем случайные вариации к базовым расходам (±20%)
-        const variation = 0.8 + Math.random() * 0.4; // от 0.8 до 1.2
-
-        data[dateKey] = {
-          food: Math.round((base.food * variation) / 30), // делим на 30 дней для дневных расходов
-          transport: Math.round((base.transport * variation) / 30),
-          housing: Math.round(base.housing / 30), // жилье обычно постоянное
-          entertainment: Math.round((base.entertainment * variation) / 30),
-          education: Math.round((base.education * variation) / 30),
-          other: Math.round((base.other * variation) / 30),
-        };
-      }
-    });
-
-    return data;
-  };
-
-  const expensesData = generateExpensesData();
-
+  // Цвета для категорий (цветная шкала)
   const backgroundColors = [
     "#D9B6FF", // Еда
     "#FFB53D", // Транспорт
@@ -788,68 +802,42 @@ const SpendAnalysisPage = () => {
     "#FFB9B8", // Другое
   ];
 
-  // Функция для получения всех дней месяца
-  const getDaysInMonth = (year, month) => {
-    const days = [];
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day));
-    }
-
-    return days;
+  // Функция для нормализации даты
+  const normalizeDate = (date) => {
+    const normalized = new Date(date);
+    normalized.setHours(0, 0, 0, 0);
+    return normalized;
   };
 
-  // Функция для определения режима выбора
-  const detectSelectionMode = (dates) => {
-    if (dates.length === 0) return "days";
+  // Функция для загрузки транзакций
+  const fetchTransactionsForPeriod = async (startDate, endDate) => {
+    setLoading(true);
+    setError(null);
 
-    // Если все даты - это первые числа месяцев, значит это выбор месяцев
-    const allAreFirstDays = dates.every((date) => date.getDate() === 1);
-    return allAreFirstDays ? "months" : "days";
-  };
+    try {
+      console.log("🔄 Загрузка транзакций за период...");
 
-  // Функция для получения дней для расчета
-  const getSelectedDays = () => {
-    if (selectedDates.length === 0) {
-      // Период по умолчанию: 29 июля - 4 августа 2024
-      return [
-        new Date(2024, 6, 29),
-        new Date(2024, 6, 30),
-        new Date(2024, 6, 31),
-        new Date(2024, 7, 1),
-        new Date(2024, 7, 2),
-        new Date(2024, 7, 3),
-        new Date(2024, 7, 4),
-      ];
-    }
+      // Получаем транзакции через API
+      const apiTransactions = await getTransactionsByPeriod(startDate, endDate);
 
-    const currentMode = detectSelectionMode(selectedDates);
-
-    if (currentMode === "months") {
-      // Режим выбора месяцев - берем все дни выбранных месяцев
-      const monthsMap = new Map();
-
-      selectedDates.forEach((date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const key = `${year}-${month}`;
-
-        if (!monthsMap.has(key)) {
-          monthsMap.set(key, { year, month });
-        }
-      });
-
-      const allDays = [];
-      monthsMap.forEach(({ year, month }) => {
-        const daysInMonth = getDaysInMonth(year, month);
-        allDays.push(...daysInMonth);
-      });
-
-      return allDays;
-    } else {
-      // Режим выбора дней - берем только выбранные дни
-      return [...selectedDates].sort((a, b) => a - b);
+      if (apiTransactions && Array.isArray(apiTransactions)) {
+        console.log(`✅ Получено ${apiTransactions.length} транзакций от API`);
+        setTransactions(apiTransactions);
+      } else {
+        console.log("⚠️  API вернул некорректные данные, используем моковые");
+        const mockTransactions = getMockTransactions(startDate, endDate);
+        setTransactions(mockTransactions);
+      }
+    } catch (error) {
+      console.error("❌ Ошибка при получении данных:", error);
+      setError(
+        "Не удалось загрузить данные. Используем демонстрационные данные."
+      );
+      // В случае ошибки используем моковые данные
+      const mockTransactions = getMockTransactions(startDate, endDate);
+      setTransactions(mockTransactions);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -859,47 +847,43 @@ const SpendAnalysisPage = () => {
       food: 0,
       transport: 0,
       housing: 0,
-      entertainment: 0,
+      joy: 0,
       education: 0,
-      other: 0,
+      others: 0,
     };
 
-    const datesToCalculate = getSelectedDays();
+    // Группируем транзакции по категориям
+    if (Array.isArray(transactions) && transactions.length > 0) {
+      transactions.forEach((transaction) => {
+        const category = transaction.category;
+        if (category && categorySums[category] !== undefined) {
+          categorySums[category] += parseFloat(transaction.sum) || 0;
+        }
+      });
+    }
 
-    datesToCalculate.forEach((date) => {
-      const dateKey = date.toISOString().split("T")[0];
-      const dayExpenses = expensesData[dateKey];
-
-      if (dayExpenses) {
-        categorySums.food += dayExpenses.food;
-        categorySums.transport += dayExpenses.transport;
-        categorySums.housing += dayExpenses.housing;
-        categorySums.entertainment += dayExpenses.entertainment;
-        categorySums.education += dayExpenses.education;
-        categorySums.other += dayExpenses.other;
-      }
-    });
+    const data = [
+      categorySums.food,
+      categorySums.transport,
+      categorySums.housing,
+      categorySums.joy,
+      categorySums.education,
+      categorySums.others,
+    ];
 
     return {
       labels: [
-        "Еда",
-        "Транспорт",
-        "Жилье",
-        "Развлечения",
-        "Образование",
-        "Другое",
+        categoryMapping.food,
+        categoryMapping.transport,
+        categoryMapping.housing,
+        categoryMapping.joy,
+        categoryMapping.education,
+        categoryMapping.others,
       ],
       datasets: [
         {
           label: "Расходы",
-          data: [
-            categorySums.food,
-            categorySums.transport,
-            categorySums.housing,
-            categorySums.entertainment,
-            categorySums.education,
-            categorySums.other,
-          ],
+          data: data,
           backgroundColor: backgroundColors,
           borderRadius: 8,
           borderSkipped: false,
@@ -912,27 +896,14 @@ const SpendAnalysisPage = () => {
 
   // Расчет общей суммы
   const calculateTotalAmount = () => {
-    const datesToCalculate = getSelectedDays();
-
-    let total = 0;
-    datesToCalculate.forEach((date) => {
-      const dateKey = date.toISOString().split("T")[0];
-      const dayExpenses = expensesData[dateKey];
-
-      if (dayExpenses) {
-        total += Object.values(dayExpenses).reduce(
-          (sum, expense) => sum + expense,
-          0
-        );
-      }
-    });
-
-    return total;
+    if (!Array.isArray(transactions) || transactions.length === 0) {
+      return 0;
+    }
+    return transactions.reduce(
+      (total, transaction) => total + (parseFloat(transaction.sum) || 0),
+      0
+    );
   };
-
-  // ВАЖНО: Вызываем функции расчета на каждом рендере
-  const chartData = calculateChartData();
-  const totalAmount = calculateTotalAmount();
 
   // Кастомный плагин для отображения значений над столбцами
   const customDataLabelsPlugin = {
@@ -952,6 +923,7 @@ const SpendAnalysisPage = () => {
         meta.data.forEach((bar, index) => {
           const data = dataset.data[index];
           if (data > 0) {
+            // Полные числа без сокращений
             ctx.fillText(data.toLocaleString() + " ₽", bar.x, bar.y - 8);
           }
         });
@@ -959,6 +931,151 @@ const SpendAnalysisPage = () => {
 
       ctx.restore();
     },
+  };
+
+  // Регистрируем кастомный плагин
+  useEffect(() => {
+    ChartJS.register(customDataLabelsPlugin);
+
+    return () => {
+      ChartJS.unregister(customDataLabelsPlugin);
+    };
+  }, [isMobile]);
+
+  // Загружаем начальные данные при монтировании компонента
+  useEffect(() => {
+    const initializeData = async () => {
+      const today = new Date();
+      const monthAgo = new Date();
+      monthAgo.setMonth(today.getMonth() - 1);
+
+      // Загружаем данные за последний месяц
+      fetchTransactionsForPeriod(monthAgo, today);
+    };
+
+    initializeData();
+  }, []);
+
+  // Эффект для обновления данных при изменении выбранных дат
+  useEffect(() => {
+    if (selectedDates.length === 2) {
+      const [start, end] = selectedDates.sort((a, b) => a - b);
+      fetchTransactionsForPeriod(start, end);
+    }
+  }, [selectedDates]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setShowCalendar(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Функция выбора даты
+  const handleDateSelect = (date) => {
+    const normalizedDate = normalizeDate(date);
+
+    // Если ничего не выбрано - начинаем выбор
+    if (selectedDates.length === 0) {
+      setSelectedDates([normalizedDate]);
+      setSelectionStart(normalizedDate);
+      return;
+    }
+
+    // Если выбрана только начальная дата
+    if (selectedDates.length === 1 && selectionStart) {
+      // Проверяем, кликнули ли на ту же дату
+      if (normalizedDate.getTime() === selectionStart.getTime()) {
+        // Сбрасываем выбор
+        setSelectedDates([]);
+        setSelectionStart(null);
+        return;
+      }
+
+      // Завершаем выбор - устанавливаем конечную дату
+      let start = selectionStart;
+      let end = normalizedDate;
+
+      // Сортируем даты
+      if (end < start) {
+        [start, end] = [end, start];
+      }
+
+      // Устанавливаем выбранные даты
+      setSelectedDates([start, end]);
+      setSelectionStart(null);
+      return;
+    }
+
+    // Если период уже выбран (2 даты)
+    if (selectedDates.length === 2) {
+      // Проверяем, кликнули ли на одну из выбранных дат
+      const isStartDate =
+        selectedDates[0].getTime() === normalizedDate.getTime();
+      const isEndDate = selectedDates[1].getTime() === normalizedDate.getTime();
+
+      if (isStartDate || isEndDate) {
+        // Сбрасываем выбор полностью
+        setSelectedDates([]);
+      } else {
+        // Начинаем новый выбор с этой даты
+        setSelectedDates([normalizedDate]);
+        setSelectionStart(normalizedDate);
+      }
+      return;
+    }
+  };
+
+  const handleRetry = () => {
+    if (selectedDates.length === 2) {
+      const [start, end] = selectedDates.sort((a, b) => a - b);
+      fetchTransactionsForPeriod(start, end);
+    } else {
+      const today = new Date();
+      const monthAgo = new Date();
+      monthAgo.setMonth(today.getMonth() - 1);
+      fetchTransactionsForPeriod(monthAgo, today);
+    }
+  };
+
+  // Текст под общей суммой
+  const getSelectedPeriodText = () => {
+    if (selectedDates.length === 0) {
+      return "Расходы за последний месяц";
+    }
+
+    if (selectedDates.length === 2) {
+      const [start, end] = selectedDates.sort((a, b) => a - b);
+
+      const formatDate = (date) => {
+        return date.toLocaleDateString("ru-RU", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      };
+
+      return `Расходы за ${formatDate(start)} — ${formatDate(end)}`;
+    }
+
+    if (selectionStart) {
+      const formatDate = (date) => {
+        return date.toLocaleDateString("ru-RU", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      };
+      return `Выберите конечную дату (выбрано: ${formatDate(selectionStart)})`;
+    }
+
+    return "Расходы";
   };
 
   // Настройки графика
@@ -975,9 +1092,8 @@ const SpendAnalysisPage = () => {
     },
     scales: {
       y: {
-        display: false,
+        display: false, // Боковая ось скрыта
         beginAtZero: true,
-        suggestedMax: Math.max(...chartData.datasets[0].data) * 1.2 || 50000,
       },
       x: {
         grid: {
@@ -1002,99 +1118,6 @@ const SpendAnalysisPage = () => {
     hover: {
       animationDuration: 0,
     },
-    events: ["mousemove", "mouseout", "click", "touchstart", "touchmove"],
-  };
-
-  // Регистрируем кастомный плагин
-  useEffect(() => {
-    ChartJS.register(customDataLabelsPlugin);
-
-    return () => {
-      ChartJS.unregister(customDataLabelsPlugin);
-    };
-  }, [isMobile]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setShowCalendar(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const handleDateSelect = (date) => {
-    setSelectedDates((prev) => {
-      const exists = prev.some((d) => d.getTime() === date.getTime());
-
-      if (exists) {
-        return prev.filter((d) => d.getTime() !== date.getTime());
-      } else {
-        return [...prev, date];
-      }
-    });
-  };
-
-  const getSelectedPeriodText = () => {
-    if (selectedDates.length === 0) {
-      return "Расходы за 29 июля 2024 — 4 августа 2024";
-    }
-
-    const currentMode = detectSelectionMode(selectedDates);
-    const sortedDates = [...selectedDates].sort((a, b) => a - b);
-
-    const formatDate = (date) => {
-      return date.toLocaleDateString("ru-RU", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    };
-
-    if (currentMode === "months") {
-      // Режим месяцев - показываем периоды с 1 по последнее число
-      const monthsMap = new Map();
-
-      sortedDates.forEach((date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const key = `${year}-${month}`;
-        if (!monthsMap.has(key)) {
-          monthsMap.set(key, { year, month });
-        }
-      });
-
-      const months = Array.from(monthsMap.values()).sort((a, b) => {
-        if (a.year !== b.year) return a.year - b.year;
-        return a.month - b.month;
-      });
-
-      if (months.length === 1) {
-        const { year, month } = months[0];
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        return `Расходы за ${formatDate(firstDay)} — ${formatDate(lastDay)}`;
-      } else {
-        const firstMonth = months[0];
-        const lastMonth = months[months.length - 1];
-        const startDate = new Date(firstMonth.year, firstMonth.month, 1);
-        const endDate = new Date(lastMonth.year, lastMonth.month + 1, 0);
-        return `Расходы за ${formatDate(startDate)} — ${formatDate(endDate)}`;
-      }
-    } else {
-      // Режим дней - показываем точные выбранные даты
-      if (sortedDates.length === 1) {
-        return `Расходы за ${formatDate(sortedDates[0])}`;
-      } else {
-        const start = sortedDates[0];
-        const end = sortedDates[sortedDates.length - 1];
-        return `Расходы за ${formatDate(start)} — ${formatDate(end)}`;
-      }
-    }
   };
 
   // Для мобильной версии - страница выбора периода
@@ -1120,7 +1143,6 @@ const SpendAnalysisPage = () => {
                 <BaseButton
                   text="Выбрать период"
                   onClick={() => setShowCalendar(false)}
-                  active={true}
                 />
               </SConfirmButtonWrapper>
             </SPageContainer>
@@ -1129,6 +1151,9 @@ const SpendAnalysisPage = () => {
       </>
     );
   }
+
+  const chartData = calculateChartData();
+  const totalAmount = calculateTotalAmount();
 
   // Для мобильной версии - основная страница анализа
   if (isMobile) {
@@ -1145,12 +1170,23 @@ const SpendAnalysisPage = () => {
                 <SPeriodText>{getSelectedPeriodText()}</SPeriodText>
 
                 <SChartWrapper>
-                  <Bar
-                    key={`mobile-${selectedDates.length}-${totalAmount}`}
-                    ref={chartRef}
-                    data={chartData}
-                    options={chartOptions}
-                  />
+                  {loading ? (
+                    <SLoadingText>Загрузка данных...</SLoadingText>
+                  ) : error ? (
+                    <div>
+                      <SErrorText>{error}</SErrorText>
+                      <SRetryButton onClick={handleRetry}>
+                        Попробовать снова
+                      </SRetryButton>
+                    </div>
+                  ) : (
+                    <Bar
+                      key={`mobile-${selectedDates.length}-${totalAmount}`}
+                      ref={chartRef}
+                      data={chartData}
+                      options={chartOptions}
+                    />
+                  )}
                 </SChartWrapper>
               </SChartContainer>
 
@@ -1158,7 +1194,6 @@ const SpendAnalysisPage = () => {
                 <BaseButton
                   text="Выбрать другой период"
                   onClick={() => setShowCalendar(true)}
-                  active={true}
                 />
               </SButtonWrapper>
             </SPageContainer>
@@ -1188,12 +1223,23 @@ const SpendAnalysisPage = () => {
                 <SPeriodText>{getSelectedPeriodText()}</SPeriodText>
 
                 <SChartWrapper>
-                  <Bar
-                    key={`desktop-${selectedDates.length}-${totalAmount}`}
-                    ref={chartRef}
-                    data={chartData}
-                    options={chartOptions}
-                  />
+                  {loading ? (
+                    <SLoadingText>Загрузка данных...</SLoadingText>
+                  ) : error ? (
+                    <div>
+                      <SErrorText>{error}</SErrorText>
+                      <SRetryButton onClick={handleRetry}>
+                        Попробовать снова
+                      </SRetryButton>
+                    </div>
+                  ) : (
+                    <Bar
+                      key={`desktop-${selectedDates.length}-${totalAmount}`}
+                      ref={chartRef}
+                      data={chartData}
+                      options={chartOptions}
+                    />
+                  )}
                 </SChartWrapper>
               </SChartContainer>
             </SContent>

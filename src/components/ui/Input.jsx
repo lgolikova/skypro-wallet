@@ -32,15 +32,15 @@ const SInput = styled.input`
     border: 1px solid #999999;
     outline: none;
 
-    ${({ error }) =>
-        error &&
+    ${({ $error }) =>
+        $error &&
         css`
             border-color: #f25050;
             background-color: #ffebeb;
         `}
 
-    ${({ valid }) =>
-        valid &&
+    ${({ $valid }) =>
+        $valid &&
         css`
             border-color: #1fa46c;
             background-color: #dbffe9;
@@ -84,9 +84,8 @@ export const BaseInput = ({
                     type={type}
                     value={value}
                     onChange={onChange}
-                    onInput={onInput}
-                    error={error}
-                    valid={!error && valid}
+                    $error={error}
+                    $valid={!error && valid}
                     placeholder={placeholder}
                 />
                 {mode === "login" && error && <StarInside>*</StarInside>}
