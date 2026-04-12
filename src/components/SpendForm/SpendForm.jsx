@@ -20,7 +20,6 @@ export const SpendForm = () => {
     newSpendCategory, setNewSpendCategory,
     newSpendDate, setNewSpendDate,
     newSpendSum, setNewSpendSum,
-    // isCategorySelected,
     editSpend
   } = useContext(SpendsContext);
 
@@ -33,16 +32,15 @@ export const SpendForm = () => {
   }
 
   const [errors, setErrors] = useState(initialErrorsState);
+  const [wasSubmitted, setWasSubmitted] = useState(false);
 
   const handleCategoryClick = (categoryName) => {
-    // console.log(`кликнули по категории ${categoryName}`);
     setIsCategorySelected(categoryName);
   };
 
 
   const { id } = useParams();
   const selectedSpend = spends.find((spend) => spend._id === id);
-  // console.log("selectedSpend: ", selectedSpend);
 
 
   useEffect(() => {
@@ -77,26 +75,22 @@ export const SpendForm = () => {
       isActualDate = !isNaN(parsedDate.getTime());
     }
 
-
     const newErrors = {
       description: !newSpendDescription.trim() || newSpendDescription.trim().length < 4,
       category: !isCategorySelected,
-      // date: !newSpendDate.trim(),
       date: !isDateFormallyValid || !isActualDate,
       sum: !newSpendSum.toString().trim() || isNaN(Number(newSpendSum.toString().replace(/\s/g, '').replace(',', '.'))) || Number(newSpendSum.toString().replace(/\s/g, '').replace(',', '.')) < 0,
     };
 
-
     setErrors(newErrors);
-    console.log("Результат проверки перед отправкой:", newErrors);
 
     if (Object.values(newErrors).some((error) => error)) {
-      console.log("данные невалидные: ", newErrors);
+      setWasSubmitted(true);
       return;
     }
 
 
-    // отформатировать дату для записи LS
+    // отформатировать дату
     const [day, month, year] = newSpendDate.split(".");
     // const fullYear = year.length === 2 ? (parseInt(year, 10) >= 50 ? `19${year}` : `20${year}`) : year;
     const fullYear = year.length === 2 ? `20${year}` : year;
@@ -105,10 +99,7 @@ export const SpendForm = () => {
     // const formattedDate = format(parsedDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
     const formattedDate = format(parsedDate, "M-d-yyyy");
 
-    // отформатировать сумму для записи LS
-    // const formattedSum = parseFloat(newSpendSum.replace(/\s/g, '').replace(',', '.')).toLocaleString('ru-RU');
-    // console.log("formattedSum: ", formattedSum);
-    // console.log("formattedSum: ", typeof(formattedSum));
+    // отформатировать сумму
     const formattedSum = Number(newSpendSum.replace(/\s/g, '').replace(',', '.'));
 
 
@@ -161,11 +152,11 @@ export const SpendForm = () => {
             Описание {errors.description && <span style={{ color: "red", fontWeight: "400", }}>*</span>}
           </SBlockTitle>
           <BaseInput
-            // label="Описание"
             value={newSpendDescription}
             onChange={(event) => {
               setNewSpendDescription(event.target.value);
               setErrors(prev => ({ ...prev, description: false }));
+              setWasSubmitted(false);
             }}
             error={errors.description}
             valid={!errors.description && newSpendDescription}
@@ -185,18 +176,12 @@ export const SpendForm = () => {
                   name={category.label}
                   icon={category.icon}
                   iconActive={category.iconActive}
-                  // icon={!!isCategorySelected ?
-                  //   category.iconActive
-                  //   :
-                  //   category.icon
-                  // }
-
                   isSelected={isCategorySelected === category.value}
-
                   onClick={() => {
                     setIsCategorySelected(category.value)
                     setNewSpendCategory(category.value);
-                    // handleCategoryClick(category.value);
+                    setErrors(prev => ({ ...prev, category: false }));
+                    setWasSubmitted(false);
                   }}
                   isCategorySelected={isCategorySelected === category.value}
                   handleCategoryClick={handleCategoryClick}
@@ -211,11 +196,11 @@ export const SpendForm = () => {
             Дата {errors.date && <span style={{ color: "red", fontWeight: "400", }}>*</span>}
           </SBlockTitle>
           <BaseInput
-            // label="Дата"
             value={newSpendDate}
             onChange={(event) => {
               setNewSpendDate(event.target.value);
               setErrors(prev => ({ ...prev, date: false }));
+              setWasSubmitted(false);
             }}
             error={errors.date}
             valid={!errors.date && newSpendDate}
@@ -228,11 +213,11 @@ export const SpendForm = () => {
             Сумма {errors.sum && <span style={{ color: "red", fontWeight: "400", }}>*</span>}
           </SBlockTitle>
           <BaseInput
-            // label="Сумма"
             value={newSpendSum}
             onChange={(event) => {
               setNewSpendSum(event.target.value);
               setErrors(prev => ({ ...prev, sum: false }));
+              setWasSubmitted(false);
             }}
             error={errors.sum}
             valid={!errors.sum && newSpendSum}
@@ -242,10 +227,7 @@ export const SpendForm = () => {
 
         <BaseButton
           type="submit"
-          // active={active}
-          // active="true"
-          // disabled={!active}
-          // onClick={onClick}
+          active={!wasSubmitted}
           text={!isSpendSelected ? "Добавить новый расход" : "Сохранить редактирование"}
         />
       </SFormWrapper>
