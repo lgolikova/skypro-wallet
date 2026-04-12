@@ -52,3 +52,18 @@ export async function deleteSpend(token, spendId) {
   }
 };
 
+export async function patchSpend(token, spendId, newData) {
+  try {
+    const resp = await axios.patch(`${API_URL}/${spendId}`, newData, {
+      headers: {
+        "Content-type": "",
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    // console.log("resp.data в апи функции patchSpend: ", resp.data);
+    return resp.data;
+  } catch (error) {
+    console.error("Ошибка при редактировании расхода: ", error);
+    throw error;
+  }
+};
