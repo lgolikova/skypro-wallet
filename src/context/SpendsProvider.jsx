@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { SpendsContext } from "./SpendsContext";
 // import { transactions } from "../data";
 import { useNavigate } from "react-router-dom";
-import { deleteSpend, fetchSpends, postSpend } from "../services/spends";
+import { deleteSpend, fetchSpends, patchSpend, postSpend } from "../services/spends";
 import { AuthContext } from "./AuthContext";
 
 
@@ -80,7 +80,7 @@ export const SpendsProvider = ({ children }) => {
     }
   };
 
-  const removeSpend = async(spendId) => {
+  const removeSpend = async (spendId) => {
     // setSpends(
     //   spends.filter((spend) => spend._id !== spendId)
     // )
@@ -91,6 +91,20 @@ export const SpendsProvider = ({ children }) => {
       setSpends(updatedSpendList.transactions);
     } catch (err) {
       console.error("Ошибка при удалени расхода в провайдере: ", err);
+    }
+  };
+
+  const editSpend = async (spendId, {description, category, date, sum}) => {
+    try {
+      const newData = { description, category, date, sum };
+
+      const updatedSpendList = await patchSpend(token, spendId, newData);
+      // console.log("updatedSpendList.transactions: ", updatedSpendList.transactions);
+
+      setSpends(updatedSpendList.transactions);
+      setIsSpendSelected("");
+    } catch (err) {
+      console.error("Ошибка при редактировании расхода в провайдере: ", err);
     }
   };
 
@@ -110,6 +124,7 @@ export const SpendsProvider = ({ children }) => {
         newSpendCategory, setNewSpendCategory,
         newSpendDate, setNewSpendDate,
         newSpendSum, setNewSpendSum,
+        editSpend
       }}>
       {children}
     </SpendsContext.Provider>
