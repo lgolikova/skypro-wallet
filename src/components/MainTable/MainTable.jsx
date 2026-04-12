@@ -10,10 +10,7 @@ export const MainTable = () => {
   const {
     spends,
     isSpendSelected,
-    // isCategorySelected,
     setNewSpendCategory,
-    // handleCategoryInDropdownListClick,
-    // isCategorySelectedInDropdownList, setIsCategorySelectedInDropdownList,
   } = useContext(SpendsContext);
 
 
@@ -28,9 +25,6 @@ export const MainTable = () => {
   const handleCloseFilter = (categoryName) => {
     setIsFilterActive(false);
     setNewSpendCategory(categoryName);
-    console.log("Нажали на категорию в выпадающем списке");
-    // handleCategoryInDropdownListClick(categoryName)
-    // setIsCategorySelectedInDropdownList(categoryName)
   };
 
   const handleClickSort = () => {
@@ -86,7 +80,6 @@ export const MainTable = () => {
                 <SDropdownListWrapper ref={popRef}>
                   <DropdownListFilter
                     onCategorySelectInDropdownList={handleCloseFilter}
-                    // isCategorySelectedInDropdownList={isCategorySelectedInDropdownList}
                   />
                 </SDropdownListWrapper>
               }

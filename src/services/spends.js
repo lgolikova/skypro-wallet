@@ -12,11 +12,9 @@ export async function fetchSpends(token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("Ответ сервера в fetchSpends: ", resp.data);
     return resp.data;
   } catch (error) {
     console.error("Ошибка при получении расходов: ", error);
-    // throw new Error(error.response.data.error);
   }
 };
 
@@ -28,7 +26,6 @@ export async function postSpend(token, newSpend) {
         Authorization: `Bearer ${token}`,
       }
     });
-    // console.log("resp.data в апи функции postSpend: ", resp.data);
     return resp.data;
   } catch (error) {
     console.error("Ошибка при добавлении расхода: ", error);
@@ -44,7 +41,6 @@ export async function deleteSpend(token, spendId) {
         Authorization: `Bearer ${token}`,
       }
     });
-    // console.log("resp.data в апи функции deleteSpend: ", resp.data);
     return resp.data;
   } catch (error) {
     console.error("Ошибка при добавлении расхода: ", error);
@@ -60,7 +56,6 @@ export async function patchSpend(token, spendId, newData) {
         Authorization: `Bearer ${token}`,
       }
     });
-    // console.log("resp.data в апи функции patchSpend: ", resp.data);
     return resp.data;
   } catch (error) {
     console.error("Ошибка при редактировании расхода: ", error);

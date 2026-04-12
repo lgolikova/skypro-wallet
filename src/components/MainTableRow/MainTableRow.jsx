@@ -11,7 +11,6 @@ import { useContext } from "react";
 
 export const MainTableRow = ({ spend, isSpendSelected }) => {
   const isSelected = isSpendSelected === spend._id;
-  // console.log("isSelected: ", isSelected);
   const categoryMap = categories.reduce((acc, category) => {
     acc[category.value] = category.label;
     return acc;
