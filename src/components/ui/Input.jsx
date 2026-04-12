@@ -12,7 +12,6 @@ export const BaseInput = ({
     label,
     value,
     onChange,
-    onInput,
     error,
     valid,
     mode = "spend",
