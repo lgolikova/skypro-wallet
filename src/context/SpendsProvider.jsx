@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { SpendsContext } from "./SpendsContext";
 // import { transactions } from "../data";
 import { useNavigate } from "react-router-dom";
-import { fetchSpends } from "../services/spends";
+import { fetchSpends, postSpend } from "../services/spends";
 import { AuthContext } from "./AuthContext";
 
 
@@ -58,27 +58,25 @@ export const SpendsProvider = ({ children }) => {
   };
 
 
-  const addSpend = ({
-    description,
-    category,
-    date,
-    sum,
-  }) => {
-    if (newSpendDescription.trim().length > 0) {
-      const newSpend = {
-        _id: crypto?.randomUUID() ?? Date.now().toString(),
-        description,
-        category,
-        date,
-        sum,
-      };
+  const addSpend = async ({ description, category, date, sum, }) => {
+    if (description && description.trim().length > 0) {
+      try {
+        const newSpend = { description, category, date, sum };
+        console.log("newSpend: ", newSpend);
+        console.log("категория category: ", category);
 
-      setSpends((prevSpends) => [...prevSpends, newSpend]);
+        const updatedSpendList = await postSpend(token, newSpend);
+        // console.log("updatedSpendList.transactions: ", updatedSpendList.transactions);
 
-      setNewSpendDescription("");
-      setNewSpendCategory("");
-      setNewSpendDate("");
-      setNewSpendSum("");
+        setSpends(updatedSpendList.transactions);
+
+        setNewSpendDescription("");
+        setNewSpendCategory("");
+        setNewSpendDate("");
+        setNewSpendSum("");
+      } catch (err) {
+        console.log("Ошибка при добавлении задачи в провайдере: ", err);
+      }
     }
   };
 
