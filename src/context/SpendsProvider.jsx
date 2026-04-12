@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { SpendsContext } from "./SpendsContext";
 // import { transactions } from "../data";
 import { useNavigate } from "react-router-dom";
-import { fetchSpends, postSpend } from "../services/spends";
+import { deleteSpend, fetchSpends, postSpend } from "../services/spends";
 import { AuthContext } from "./AuthContext";
 
 
@@ -45,7 +45,7 @@ export const SpendsProvider = ({ children }) => {
       // console.log("data в провайдере: ", data);
       setSpends(data);
     } catch (err) {
-      console.error("Ошибка при получении курсов: ", err);
+      console.error("Ошибка при получении расходов: ", err);
     }
   };
 
@@ -62,8 +62,8 @@ export const SpendsProvider = ({ children }) => {
     if (description && description.trim().length > 0) {
       try {
         const newSpend = { description, category, date, sum };
-        console.log("newSpend: ", newSpend);
-        console.log("категория category: ", category);
+        // console.log("newSpend: ", newSpend);
+        // console.log("категория category: ", category);
 
         const updatedSpendList = await postSpend(token, newSpend);
         // console.log("updatedSpendList.transactions: ", updatedSpendList.transactions);
@@ -75,15 +75,23 @@ export const SpendsProvider = ({ children }) => {
         setNewSpendDate("");
         setNewSpendSum("");
       } catch (err) {
-        console.log("Ошибка при добавлении задачи в провайдере: ", err);
+        console.error("Ошибка при добавлении расхода в провайдере: ", err);
       }
     }
   };
 
-  const deleteSpend = (spendId) => {
-    setSpends(
-      spends.filter((spend) => spend._id !== spendId)
-    )
+  const removeSpend = async(spendId) => {
+    // setSpends(
+    //   spends.filter((spend) => spend._id !== spendId)
+    // )
+    try {
+      const updatedSpendList = await deleteSpend(token, spendId);
+      console.log("updatedSpendList.transactions: ", updatedSpendList.transactions);
+
+      setSpends(updatedSpendList.transactions);
+    } catch (err) {
+      console.error("Ошибка при удалени расхода в провайдере: ", err);
+    }
   };
 
   useEffect(() => {
@@ -97,7 +105,7 @@ export const SpendsProvider = ({ children }) => {
         spends, getSpends,
         isSpendSelected, setIsSpendSelected,
         handleSendEditClick,
-        addSpend, deleteSpend,
+        addSpend, removeSpend,
         newSpendDescription, setNewSpendDescription,
         newSpendCategory, setNewSpendCategory,
         newSpendDate, setNewSpendDate,

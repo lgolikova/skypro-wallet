@@ -19,7 +19,7 @@ export const MainTableRow = ({ spend, isSpendSelected }) => {
 
   const {
     handleSendEditClick,
-    deleteSpend,
+    removeSpend,
   } = useContext(SpendsContext);
 
   return (
@@ -39,7 +39,7 @@ export const MainTableRow = ({ spend, isSpendSelected }) => {
             <SIcon
             src={isSelected ? deleteIconActive : deleteIcon} 
             alt="удалить"
-            onClick={() => deleteSpend(spend._id)} />
+            onClick={() => removeSpend(spend._id)} />
           </SIconsWrapper>
         </STableRow>
       </SRowWrapper>
