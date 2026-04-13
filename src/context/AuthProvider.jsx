@@ -19,7 +19,7 @@ const AuthProvider = ({ children }) => {
 
     const login = (userLogin) => {
         updateUserInfo(userLogin);
-        setToken(tokenFromLS.token);
+        setToken(token);
         return true;
     };
 
