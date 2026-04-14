@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 
 
 export const STableWrapper = styled.div`
@@ -141,10 +141,6 @@ export const SColumnNamesWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 32px;
-
-  @media (max-width: 375px) {
-    /* width: 375px; */
-  }
 `;
 
 export const SColumnName = styled.div`
@@ -169,16 +165,10 @@ export const SColumnName = styled.div`
 
 export const STableContent = styled.div`
   width: 100%;
-  /* padding: 18px 34px 7px 32px; */
   padding-top: 18px;
-  /* padding-left: 32px; */
   display: flex;
   flex-direction: column;
-  /* gap: 14px; */
 
-  @media (max-width: 375px) {
-    /* gap: 14px; */
-  }
 `;
 
 export const SDropdownListWrapper = styled.div`
@@ -205,25 +195,5 @@ export const SLinkTo = styled.div`
       width: 14px;
       height: 14px;
     }
-    
-    /* margin-bottom: 8px; */
   }
 `;
-
-// const rotate = keyframes`
-// 0% {
-//   transform: rotateZ(0deg);
-// }
-// 100% {
-//   transform: rotateZ(180deg);
-// }
-// `;
-
-// const rotateBack = keyframes`
-// 0% {
-//   transform: rotateZ(180deg);
-// }
-// 100% {
-//   transform: rotateZ(0deg);
-// }
-// `;

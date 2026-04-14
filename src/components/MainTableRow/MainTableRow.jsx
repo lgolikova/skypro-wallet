@@ -37,10 +37,8 @@ export const MainTableRow = ({ spend, isSpendSelected }) => {
           <SItem $isSpendSelected={isSelected}>{spend.description}</SItem>
           <SItem $isSpendSelected={isSelected}>{categoryMap[spend.category]}</SItem>
           <SItem $isSpendSelected={isSelected}
-          // style={{ width: "142px" }}
           >{format(new Date(spend.date), "dd.MM.yyyy")}</SItem>
           <SItem $isSpendSelected={isSelected}
-          // style={{ width: "134px" }}
           >{spend.sum.toLocaleString('ru-RU')} &#8381;</SItem>
           <SIconsWrapper>
             <SIcon

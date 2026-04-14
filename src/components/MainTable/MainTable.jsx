@@ -5,19 +5,12 @@ import actionIcon from "../../assets/icons/actions.svg";
 import { DropdownListFilter, DropdownListSort } from "../DropdownList/DropdownList";
 import { SpendsContext } from "../../context/SpendsContext";
 import { categories } from "../../utils/categories";
-import { useNavigate } from "react-router-dom";
-import { useMediaQuery } from "react-responsive";
-import addIcon from "../../assets/icons/add.svg";
 
 
 export const MainTable = () => {
-  const navigate = useNavigate();
-  const isMobile = useMediaQuery({ query: "(max-width: 375px)" });
-
   const {
     spends,
     isSpendSelected,
-    setNewSpendCategory,
     filterCategories,
     setFilterCategories,
     sortType,
@@ -35,7 +28,6 @@ export const MainTable = () => {
 
   const handleCloseFilter = (categoryName) => {
     setIsFilterActive(false);
-    // setNewSpendCategory(categoryName);
 
     setFilterCategories(prev => {
       if (categoryName === "") return [];
@@ -101,14 +93,6 @@ export const MainTable = () => {
       <STableHeaderWrapper>
         <STableTopWrapper>
           <STableTitle>Таблица расходов</STableTitle>
-
-          {/* {isMobile && (
-            <SLinkTo onClick={() => navigate("/spend/new")}>
-              <img src={addIcon} alt="добавить" />
-              <span>Новый расход</span>
-            </SLinkTo>
-          )} */}
-
           <SActionsWrapper>
 
             <SActionWrapper onClick={handleOpenFilter}>

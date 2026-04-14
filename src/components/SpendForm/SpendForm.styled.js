@@ -81,9 +81,7 @@ export const SWrapper = styled.div`
   flex-direction: column;
   gap: 12px;
   justify-content: start;
-  /* align-items: start; */
   width: 100%;
-  /* padding: 0 16px; */
 `
 
 export const SDeleteLink = styled(Link)`

@@ -6,7 +6,6 @@ import NewSpendPage from "./pages/NewSpendPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import RegisterPage from "./pages/RegisterPage";
 import SpendAnalysisPage from "./pages/SpendAnalysisPage";
-import { transactions } from "./data";
 import { useState } from "react";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -20,14 +19,10 @@ function PrivateRoute() {
 function AppRoutes() {
     const [isSpendSelected, setIsSpendSelected] = useState("");
 
-    const handleSendClick = (sendId) => {
-        setIsSpendSelected(sendId);
-    };
 
     return (
         <Routes>
             <Route element={<PrivateRoute />}>
-                {/* <Route path="/" element={<MainPage transactions={transactions} isSpendSelected={isSpendSelected} onclick={handleSendClick} />}> */}
                 <Route path="/" element={<MainPage
                 />}>
                     <Route index element={<MainTable
