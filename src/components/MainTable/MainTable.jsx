@@ -1,13 +1,19 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import { STableWrapper, STableHeaderWrapper, STableTopWrapper, STableTitle, SActionsWrapper, SActionWrapper, SColumnNamesWrapper, SColumnName, STableContent, SFilterTitle, SSortTitle, SFlag, SActionIcon, SDropdownListWrapper } from "./MainTable.styled";
+import { STableWrapper, STableHeaderWrapper, STableTopWrapper, STableTitle, SActionsWrapper, SActionWrapper, SColumnNamesWrapper, SColumnName, STableContent, SFilterTitle, SSortTitle, SFlag, SActionIcon, SDropdownListWrapper, SLinkTo } from "./MainTable.styled";
 import { MainTableRow } from "../MainTableRow/MainTableRow";
 import actionIcon from "../../assets/icons/actions.svg";
 import { DropdownListFilter, DropdownListSort } from "../DropdownList/DropdownList";
 import { SpendsContext } from "../../context/SpendsContext";
 import { categories } from "../../utils/categories";
+import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
+import addIcon from "../../assets/icons/add.svg";
 
 
 export const MainTable = () => {
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery({ query: "(max-width: 375px)" });
+
   const {
     spends,
     isSpendSelected,
@@ -95,6 +101,14 @@ export const MainTable = () => {
       <STableHeaderWrapper>
         <STableTopWrapper>
           <STableTitle>Таблица расходов</STableTitle>
+
+          {/* {isMobile && (
+            <SLinkTo onClick={() => navigate("/spend/new")}>
+              <img src={addIcon} alt="добавить" />
+              <span>Новый расход</span>
+            </SLinkTo>
+          )} */}
+
           <SActionsWrapper>
 
             <SActionWrapper onClick={handleOpenFilter}>

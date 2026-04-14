@@ -10,6 +10,7 @@ import { transactions } from "./data";
 import { useState } from "react";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import { MainTable } from "./components/MainTable/MainTable.jsx";
 
 function PrivateRoute() {
     const { user } = useContext(AuthContext);
@@ -26,12 +27,18 @@ function AppRoutes() {
     return (
         <Routes>
             <Route element={<PrivateRoute />}>
-                <Route path="/" element={<MainPage transactions={transactions} isSpendSelected={isSpendSelected} onclick={handleSendClick} />}>
+                {/* <Route path="/" element={<MainPage transactions={transactions} isSpendSelected={isSpendSelected} onclick={handleSendClick} />}> */}
+                <Route path="/" element={<MainPage
+                />}>
+                    <Route index element={<MainTable
+                    />} />
                     <Route path="spend/new" element={<NewSpendPage />} />
                     <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected} />} />
                 </Route>
+
                 <Route path="/spend-analysis" element={<SpendAnalysisPage />} />
             </Route>
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="*" element={<NotFoundPage />} />

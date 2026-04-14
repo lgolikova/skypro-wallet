@@ -1,16 +1,19 @@
 import { BaseInput } from "../ui/Input";
 import { BaseButton } from "../ui/Button";
 import { Category } from "../category/Category";
-import { SFormWrapper, SFormTitle, SBlockWrapper, SBlockTitle, SCategoriesWrapper } from "./SpendForm.styled";
+import { SFormWrapper, SFormTitle, SBlockWrapper, SBlockTitle, SCategoriesWrapper, SWrapper, SLinkTo, SDeleteLink } from "./SpendForm.styled";
 import { categories } from "../../utils/categories";
 import { parse, format } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import { SpendsContext } from "../../context/SpendsContext";
 import { useParams, useNavigate } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
+import arrowIcon from "../../assets/icons/arrow-left.svg";
 
 
 export const SpendForm = () => {
   const navigate = useNavigate();
+  const isMobile = useMediaQuery({ query: "(max-width: 375px)" });
 
   const {
     spends,
@@ -20,7 +23,8 @@ export const SpendForm = () => {
     newSpendCategory, setNewSpendCategory,
     newSpendDate, setNewSpendDate,
     newSpendSum, setNewSpendSum,
-    editSpend
+    editSpend,
+    removeSpend
   } = useContext(SpendsContext);
 
   const [isCategorySelected, setIsCategorySelected] = useState("");
@@ -141,11 +145,27 @@ export const SpendForm = () => {
     }
   };
 
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    await removeSpend(id);
+    navigate("/");
+  };
+
 
   return (
     <form onSubmit={onSubmit}>
       <SFormWrapper>
-        <SFormTitle>{!isSpendSelected ? "Новый расход" : "Редактирование"}</SFormTitle>
+        <SWrapper>
+          <SLinkTo>
+            {isMobile && (
+              <SLinkTo onClick={() => navigate("/")}>
+                <img src={arrowIcon} alt="назад" />
+                <span>Мои расходы</span>
+              </SLinkTo>
+            )}
+          </SLinkTo>
+          <SFormTitle>{!isSpendSelected ? "Новый расход" : "Редактирование"}</SFormTitle>
+        </SWrapper>
 
         <SBlockWrapper>
           <SBlockTitle>
@@ -230,6 +250,12 @@ export const SpendForm = () => {
           active={!wasSubmitted}
           text={!isSpendSelected ? "Добавить новый расход" : "Сохранить редактирование"}
         />
+
+        {id && isMobile && (
+          <SDeleteLink to="#" onClick={handleDelete}>
+            Удалить расход
+          </SDeleteLink>
+        )}
       </SFormWrapper>
     </form>
   )

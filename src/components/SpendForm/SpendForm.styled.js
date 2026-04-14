@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 
@@ -11,6 +12,11 @@ export const SFormWrapper = styled.div`
   flex-direction: column;
   gap: 24px;
   padding: 32px 33px;
+
+  @media screen and (max-width: 375px) {
+    width: auto;
+    height: auto;
+  }
 `;
 
 export const SFormTitle = styled.div`
@@ -19,6 +25,10 @@ export const SFormTitle = styled.div`
   font-size: 24px;
   line-height: 100%;
   vertical-align: middle;
+
+  @media screen and (max-width: 375px) {
+
+  }
 `;
 
 export const SBlockWrapper = styled.div`
@@ -43,3 +53,46 @@ export const SCategoriesWrapper = styled.div`
   gap: 6px;
   flex-wrap: wrap;
 `;
+
+export const SLinkTo = styled.div`
+  display: none;
+
+  @media (max-width: 375px) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    
+    span {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+`;
+
+export const SWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: start;
+  /* align-items: start; */
+  width: 100%;
+  /* padding: 0 16px; */
+`
+
+export const SDeleteLink = styled(Link)`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
+  letter-spacing: 0px;
+  text-align: center;
+  vertical-align: middle;
+  color: #999999;
+  text-decoration: underline;
+`

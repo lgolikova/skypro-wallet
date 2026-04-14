@@ -7,9 +7,11 @@ import { SRowWrapper, STableRow, SItem, SIconsWrapper, SIcon } from "./MainTable
 import { format } from "date-fns";
 import { SpendsContext } from "../../context/SpendsContext";
 import { useContext } from "react";
+import { useMediaQuery } from "react-responsive";
 
 
 export const MainTableRow = ({ spend, isSpendSelected }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 375px)" });
   const isSelected = isSpendSelected === spend._id;
   const categoryMap = categories.reduce((acc, category) => {
     acc[category.value] = category.label;
@@ -21,14 +23,25 @@ export const MainTableRow = ({ spend, isSpendSelected }) => {
     removeSpend,
   } = useContext(SpendsContext);
 
+  const onRowClick = () => {
+    if (isMobile) {
+      handleSendEditClick(spend._id);
+    }
+  };
+
+
   return (
     <>
-      <SRowWrapper >
+      <SRowWrapper onClick={onRowClick}>
         <STableRow $isSpendSelected={isSelected}>
           <SItem $isSpendSelected={isSelected}>{spend.description}</SItem>
           <SItem $isSpendSelected={isSelected}>{categoryMap[spend.category]}</SItem>
-          <SItem $isSpendSelected={isSelected} style={{ width: "142px" }}>{format(new Date(spend.date), "dd.MM.yyyy")}</SItem>
-          <SItem $isSpendSelected={isSelected} style={{ width: "134px" }}>{spend.sum.toLocaleString('ru-RU')} &#8381;</SItem>
+          <SItem $isSpendSelected={isSelected}
+          // style={{ width: "142px" }}
+          >{format(new Date(spend.date), "dd.MM.yyyy")}</SItem>
+          <SItem $isSpendSelected={isSelected}
+          // style={{ width: "134px" }}
+          >{spend.sum.toLocaleString('ru-RU')} &#8381;</SItem>
           <SIconsWrapper>
             <SIcon
               src={isSelected ? editIconActive : editIcon}
@@ -36,9 +49,9 @@ export const MainTableRow = ({ spend, isSpendSelected }) => {
               onClick={() => handleSendEditClick(spend._id)}
             />
             <SIcon
-            src={isSelected ? deleteIconActive : deleteIcon} 
-            alt="удалить"
-            onClick={() => removeSpend(spend._id)} />
+              src={isSelected ? deleteIconActive : deleteIcon}
+              alt="удалить"
+              onClick={() => removeSpend(spend._id)} />
           </SIconsWrapper>
         </STableRow>
       </SRowWrapper>

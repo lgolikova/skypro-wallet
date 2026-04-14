@@ -10,6 +10,11 @@ export const SRowWrapper = styled.div`
   gap: 32px;
   background-color: ${({ $isSpendSelected }) => ($isSpendSelected ? "#DBFFE9" : "#ffffff")};
   cursor: pointer;
+
+  @media (max-width: 375px) {
+    max-width: 375px;
+    gap: 16px;
+  }
 `;
 
 export const STableRow = styled.div`
@@ -23,6 +28,11 @@ export const STableRow = styled.div`
   gap: 32px;
   background-color: ${({ $isSpendSelected }) => ($isSpendSelected ? "#DBFFE9" : "#ffffff")};
   cursor: pointer;
+
+  @media (max-width: 375px) {
+    padding-left: 16px;
+    gap: 10px;
+  }
 `;
 
 export const SItem = styled.div`
@@ -32,6 +42,16 @@ export const SItem = styled.div`
   line-height: 100%;
   vertical-align: middle;
   color: ${({ $isSpendSelected }) => ($isSpendSelected ? "#1FA46C" : "#000000")};
+
+  @media (max-width: 375px) {
+    width: auto;
+    font-size: 10px;
+    
+    &:nth-child(1) { width: 30%; }
+    &:nth-child(2) { width: 25%; }
+    &:nth-child(3) { width: 20%; }
+    &:nth-child(4) { width: 25%; }
+  }
 `;
 
 export const SIconsWrapper = styled.div`
@@ -41,6 +61,10 @@ export const SIconsWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+
+  @media (max-width: 375px) {
+    display: none;
+  }
 `;
 
 export const SIcon = styled.img`
