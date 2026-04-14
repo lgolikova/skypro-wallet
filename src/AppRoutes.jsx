@@ -1,20 +1,39 @@
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import EditSpendPage from "./pages/EditSpendPage";
-import LoginPage from "./pages/LoginPage";
+import LoginPage from "./pages/LoginPage.jsx";
 import NewSpendPage from "./pages/NewSpendPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import RegisterPage from "./pages/RegisterPage";
 import SpendAnalysisPage from "./pages/SpendAnalysisPage";
+import { useState } from "react";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
+import { MainTable } from "./components/MainTable/MainTable.jsx";
+
+function PrivateRoute() {
+    const { user } = useContext(AuthContext);
+    return user ? <Outlet /> : <Navigate to="/login" />;
+}
 
 function AppRoutes() {
+    const [isSpendSelected, setIsSpendSelected] = useState("");
+
+
     return (
         <Routes>
-            <Route path="/" element={<MainPage />}>
-                <Route path="spend/new" element={<NewSpendPage />} />
-                <Route path="spend/:id" element={<EditSpendPage />} />
+            <Route element={<PrivateRoute />}>
+                <Route path="/" element={<MainPage
+                />}>
+                    <Route index element={<MainTable
+                    />} />
+                    <Route path="spend/new" element={<NewSpendPage />} />
+                    <Route path="spend/:id" element={<EditSpendPage isSpendSelected={isSpendSelected} />} />
+                </Route>
+
+                <Route path="/spend-analysis" element={<SpendAnalysisPage />} />
             </Route>
-            <Route path="/spend-analysis" element={<SpendAnalysisPage />} />
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="*" element={<NotFoundPage />} />

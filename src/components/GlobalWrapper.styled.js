@@ -5,6 +5,10 @@ const SGlobalWrapper = styled.div`
     width: 100%;
     height: calc(100vh - 64px);
     background-color: #f4f5f6;
+
+    @media (max-width: 768px) {
+        background-color: #fff;
+    }
 `;
 
 export default SGlobalWrapper;
